@@ -1,10 +1,10 @@
 import React from "react";
 
-import HomeScreen from "../screens/HomeScreen";
-import DiscoverScreen from "../screens/DiscoverScreen";
-import FavouriteScreen from "../screens/FavouriteScreen";
-import CommunityScreen from "../screens/CommunityScreen";
-import AccountScreen from "../screens/AccountScreen";
+import HomeScreen from "../screens/main/HomeScreen";
+import DiscoverScreen from "../screens/main/DiscoverScreen";
+import FavouriteScreen from "../screens/main/FavouriteScreen";
+import CommunityScreen from "../screens/main/CommunityScreen";
+import AccountScreen from "../screens/main/AccountScreen";
 
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
