@@ -4,51 +4,63 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../../App";
 
-type LoginScreenProps = {};
-
-export default function LoginScreen({}: LoginScreenProps) {
+export default function RegisterScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [confirmPassword, setConfirmPassword] = useState<string>("");
+
   const [emailError, setEmailError] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [confirmPasswordError, setConfirmPasswordError] = useState<string | null>(null);
+
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const handleSubmit = () => {
     setEmailError(null);
     setPasswordError(null);
+    setConfirmPasswordError(null);
 
     const trimmedEmail = email.trim();
     const trimmedPassword = password.trim();
+    const trimmedConfirm = confirmPassword.trim();
 
     if (!trimmedEmail) {
-        setEmailError("Enter e-mail");
-      return;
-    } else if (!trimmedPassword) {
-        setPasswordError("Enter password");
+      setEmailError("Enter e-mail");
       return;
     }
-
-    // Basic e-mail validation
-    const emailLooksValid = /.+@.+\..+/.test(trimmedEmail);
-    if (!emailLooksValid) {
-        setEmailError("Enter valid e-mail");
+    if (!/.+@.+\..+/.test(trimmedEmail)) {
+      setEmailError("Enter valid e-mail");
+      return;
+    }
+    if (!trimmedPassword) {
+      setPasswordError("Enter password");
+      return;
+    }
+    if (trimmedPassword.length < 6) {
+      setPasswordError("Min 6 characters");
+      return;
+    }
+    if (!trimmedConfirm) {
+      setConfirmPasswordError("Confirm password");
+      return;
+    }
+    if (trimmedPassword !== trimmedConfirm) {
+      setConfirmPasswordError("Passwords do not match");
       return;
     }
 
     setIsSubmitting(true);
-    // Mock login
     setTimeout(() => {
       setIsSubmitting(false);
-      // @ts-ignore
-      navigation.replace("Main");
+      navigation.navigate("Login");
     }, 800);
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.card}>
-        <Text style={styles.title}>Log in to movieland!</Text>
+        <Text style={styles.title}>Create your movieland account</Text>
 
         <View style={styles.fieldGroup}>
           <Text style={styles.label}>E-mail</Text>
@@ -76,14 +88,31 @@ export default function LoginScreen({}: LoginScreenProps) {
             placeholder="••••••••"
             secureTextEntry
             textContentType="password"
-            autoComplete="password"
+            autoComplete="password-new"
             style={styles.input}
             editable={!isSubmitting}
             onChange={() => setPasswordError(null)}
-        />
+          />
         </View>
 
         {passwordError ? <Text style={styles.error}>{passwordError}</Text> : null}
+
+        <View style={styles.fieldGroup}>
+          <Text style={styles.label}>Confirm password</Text>
+          <TextInput
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            placeholder="••••••••"
+            secureTextEntry
+            textContentType="password"
+            autoComplete="password-new"
+            style={styles.input}
+            editable={!isSubmitting}
+            onChange={() => setConfirmPasswordError(null)}
+          />
+        </View>
+
+        {confirmPasswordError ? <Text style={styles.error}>{confirmPasswordError}</Text> : null}
 
         <TouchableOpacity
           onPress={handleSubmit}
@@ -94,11 +123,13 @@ export default function LoginScreen({}: LoginScreenProps) {
           {isSubmitting ? (
             <ActivityIndicator color="#fff" />
           ) : (
-            <Text style={styles.buttonText}>Log in</Text>
+            <Text style={styles.buttonText}>Register</Text>
           )}
         </TouchableOpacity>
 
-        <Text style={styles.registerText}>Don't have an account? <Text style={styles.registerLink} onPress={() => navigation.navigate("Register")}>Register</Text></Text>
+        <Text style={styles.registerText}>
+          Already have an account? <Text style={styles.registerLink} onPress={() => navigation.navigate("Login")}>Log in</Text>
+        </Text>
       </View>
     </View>
   );
@@ -177,14 +208,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   registerLink: {
-    color: '#e11d48',
-  },
-  forgotPasswordText: {
-    color: '#b5b7be',
-    marginTop: 14,
-    textAlign: 'center',
-  },
-  forgotPasswordLink: {
     color: '#e11d48',
   },
 });
