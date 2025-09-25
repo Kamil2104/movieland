@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
-type LoginScreenProps = {
-  onLogin: (email: string) => void;
-};
+type LoginScreenProps = {};
 
-export default function LoginScreen({ onLogin }: LoginScreenProps) {
+export default function LoginScreen({}: LoginScreenProps) {
+  const navigation = useNavigation();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [emailError, setEmailError] = useState<string | null>(null);
@@ -38,7 +38,8 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
     // Mock login
     setTimeout(() => {
       setIsSubmitting(false);
-      onLogin(trimmedEmail);
+      // @ts-ignore
+      navigation.replace("Main");
     }, 800);
   };
 
