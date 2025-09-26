@@ -1,12 +1,15 @@
 import React, { useState } from "react";
+
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator } from "react-native";
-import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useNavigation } from "@react-navigation/native";
+import { Alert } from "react-native";
+
 import type { RootStackParamList } from "../../App";
 
-type LoginScreenProps = {};
+import usersData from "../../store/users.json";
 
-export default function LoginScreen({}: LoginScreenProps) {
+export default function LoginScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -15,9 +18,6 @@ export default function LoginScreen({}: LoginScreenProps) {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const handleSubmit = () => {
-    setEmailError(null);
-    setPasswordError(null);
-
     const trimmedEmail = email.trim();
     const trimmedPassword = password.trim();
 
@@ -29,15 +29,25 @@ export default function LoginScreen({}: LoginScreenProps) {
       return;
     }
 
-    // Basic e-mail validation
     const emailLooksValid = /.+@.+\..+/.test(trimmedEmail);
     if (!emailLooksValid) {
         setEmailError("Enter valid e-mail");
       return;
     }
 
+    const user = usersData.users.find((user) => user.user === trimmedEmail && user.password === trimmedPassword);
+
+    if (!user) {
+      Alert.alert(
+        "Login error",
+        "Invalid e-mail or password",
+        [{ text: "OK" }],
+        { cancelable: true }
+      );
+      return;
+    }
+
     setIsSubmitting(true);
-    // Mock login
     setTimeout(() => {
       setIsSubmitting(false);
       // @ts-ignore
@@ -54,7 +64,6 @@ export default function LoginScreen({}: LoginScreenProps) {
           <Text style={styles.label}>E-mail</Text>
           <TextInput
             value={email}
-            onChangeText={setEmail}
             placeholder="your@email.com"
             autoCapitalize="none"
             keyboardType="email-address"
@@ -62,7 +71,7 @@ export default function LoginScreen({}: LoginScreenProps) {
             autoComplete="email"
             style={styles.input}
             editable={!isSubmitting}
-            onChange={() => setEmailError(null)}
+            onChangeText={(text) => { setEmail(text); setEmailError(null); }}
           />
         </View>
 
@@ -72,14 +81,13 @@ export default function LoginScreen({}: LoginScreenProps) {
           <Text style={styles.label}>Password</Text>
           <TextInput
             value={password}
-            onChangeText={setPassword}
             placeholder="••••••••"
             secureTextEntry
             textContentType="password"
             autoComplete="password"
             style={styles.input}
             editable={!isSubmitting}
-            onChange={() => setPasswordError(null)}
+            onChangeText={(text) => { setPassword(text); setPasswordError(null); }}
         />
         </View>
 

@@ -66,7 +66,6 @@ export default function RegisterScreen() {
           <Text style={styles.label}>E-mail</Text>
           <TextInput
             value={email}
-            onChangeText={setEmail}
             placeholder="your@email.com"
             autoCapitalize="none"
             keyboardType="email-address"
@@ -74,7 +73,7 @@ export default function RegisterScreen() {
             autoComplete="email"
             style={styles.input}
             editable={!isSubmitting}
-            onChange={() => setEmailError(null)}
+            onChangeText={(text) => { setEmail(text); setEmailError(null); }}
           />
         </View>
 
@@ -84,14 +83,13 @@ export default function RegisterScreen() {
           <Text style={styles.label}>Password</Text>
           <TextInput
             value={password}
-            onChangeText={setPassword}
             placeholder="••••••••"
             secureTextEntry
             textContentType="password"
             autoComplete="password-new"
             style={styles.input}
             editable={!isSubmitting}
-            onChange={() => setPasswordError(null)}
+            onChangeText={(text) => { setPassword(text); setPasswordError(null); }}
           />
         </View>
 
@@ -101,14 +99,13 @@ export default function RegisterScreen() {
           <Text style={styles.label}>Confirm password</Text>
           <TextInput
             value={confirmPassword}
-            onChangeText={setConfirmPassword}
             placeholder="••••••••"
             secureTextEntry
             textContentType="password"
             autoComplete="password-new"
             style={styles.input}
             editable={!isSubmitting}
-            onChange={() => setConfirmPasswordError(null)}
+            onChangeText={(text) => { setConfirmPassword(text); setConfirmPasswordError(null); }}
           />
         </View>
 
