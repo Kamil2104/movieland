@@ -9,7 +9,7 @@ export const ThemeContext = createContext<ThemeContextType>({
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const systemColorScheme = useColorScheme();
-  const [theme, setTheme] = useState<Theme>(lightTheme);
+  const [theme, setTheme] = useState<Theme>(darkTheme);
 
   //! FOR NOW IT'S COMMENTED BECAUSE IT'S NOT WORKING
   //! SYSTEM COLOR SCHEME RETURNS LIGHT WHILE I HAVE MY SYSTEM IN DARK MODE

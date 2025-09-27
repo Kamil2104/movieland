@@ -1,36 +1,70 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { Provider, useDispatch, useSelector } from 'react-redux';
+import { ActivityIndicator, View } from 'react-native';
 
 import LoginScreen from './screens/start/LoginScreen';
 import RegisterScreen from './screens/start/RegisterScreen';
 import BottomTabs from './navigation/BottomTabs';
 
 import { ThemeProvider } from './contexts/ThemeContext';
+import { store, RootState } from './store';
+import { loadUserFromStorage, setUserFromStorage } from './store/userSlice';
 
 import type { RootStackParamList } from './types/navigationTypes';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
+function AppNavigator() {
+  const dispatch = useDispatch();
+  const [isAppReady, setIsAppReady] = useState(false);
+  const isLoggedIn = useSelector((state: RootState) => state.user.isLoggedIn);
+
+  useEffect(() => {
+    const initUser = async () => {
+      const userData = await loadUserFromStorage();
+      dispatch(setUserFromStorage(userData));
+      setIsAppReady(true);
+    };
+
+    initUser();
+  }, [dispatch]);
+
+  if (!isAppReady) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
+  return (
+    <Stack.Navigator
+      initialRouteName={isLoggedIn ? "Main" : "Login"}
+      screenOptions={{
+        headerShown: false,
+        animation: 'fade',
+        animationDuration: 300,
+      }}
+    >
+      <Stack.Screen name="Login" component={LoginScreen} />
+      <Stack.Screen name="Register" component={RegisterScreen} />
+      <Stack.Screen name="Main" component={BottomTabs} />
+    </Stack.Navigator>
+  );
+}
+
 export default function App() {
   return (
-    <ThemeProvider>
-      <NavigationContainer>
-        <StatusBar style="auto" />
-        <Stack.Navigator
-          initialRouteName="Login"
-          screenOptions={{
-            headerShown: false,
-            animation: 'fade',
-            animationDuration: 300,
-          }}
-        >
-          <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="Register" component={RegisterScreen} />
-          <Stack.Screen name="Main" component={BottomTabs} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </ThemeProvider>
+    <Provider store={store}>
+      <ThemeProvider>
+        <NavigationContainer>
+          <StatusBar style="auto" />
+          <AppNavigator />
+        </NavigationContainer>
+      </ThemeProvider>
+    </Provider>
   );
 }

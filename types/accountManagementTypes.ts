@@ -5,6 +5,7 @@ type loginProps = {
     setPasswordError: (error: string | null) => void;
     setIsSubmitting: (isSubmitting: boolean) => void;
     navigation: any;
+    dispatch: any;
 }
 
 type registerProps = {

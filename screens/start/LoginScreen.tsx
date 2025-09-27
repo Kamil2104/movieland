@@ -1,10 +1,12 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator } from "react-native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 
 import { ThemeContext } from "../../contexts/ThemeContext";
+import { useAppDispatch } from "../../store/hooks";
+import { loadUserFromStorage, setUserFromStorage } from "../../store/userSlice";
 
 import type { RootStackParamList } from "../../types/navigationTypes";
 import { Ionicons } from "@expo/vector-icons";
@@ -15,6 +17,7 @@ import { handleLogin } from "../../validation/accountManagement";
 
 export default function LoginScreen() {
   const { theme } = useContext(ThemeContext);
+  const dispatch = useAppDispatch();
 
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [email, setEmail] = useState<string>("");
@@ -23,6 +26,20 @@ export default function LoginScreen() {
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
+
+  // Inicjalizacja store z AsyncStorage
+  useEffect(() => {
+    const initializeUser = async () => {
+      try {
+        const userData = await loadUserFromStorage();
+        dispatch(setUserFromStorage(userData));
+      } catch (error) {
+        console.error('Error initializing user store:', error);
+      }
+    };
+
+    initializeUser();
+  }, [dispatch]);
 
   const styles = StyleSheet.create({
     container: {
@@ -197,7 +214,7 @@ export default function LoginScreen() {
         {passwordError ? <Text style={styles.error}>{passwordError}</Text> : null}
 
         <TouchableOpacity
-          onPress={() => handleLogin({ email, password, setEmailError, setPasswordError, setIsSubmitting, navigation })}
+          onPress={() => handleLogin({ email, password, setEmailError, setPasswordError, setIsSubmitting, navigation, dispatch })}
           style={[styles.button, isSubmitting && styles.buttonDisabled]}
           activeOpacity={0.8}
           disabled={isSubmitting}

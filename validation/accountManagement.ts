@@ -1,11 +1,12 @@
 import { Alert } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import usersData from "../store/users.json";
+import { login as loginAction } from '../store/userSlice';
 
 import { loginProps, registerProps } from "../types/accountManagementTypes";
 
-function handleLogin(props: loginProps) {
-    const { email, password, setEmailError, setPasswordError, setIsSubmitting, navigation } = props;
+async function handleLogin(props: loginProps) {
+    const { email, password, setEmailError, setPasswordError, setIsSubmitting, navigation, dispatch } = props;
 
     const trimmedEmail = email.trim();
     const trimmedPassword = password.trim();
@@ -26,27 +27,45 @@ function handleLogin(props: loginProps) {
       return;
     }
 
-    const user = usersData.users.find((user) => user.user === trimmedEmail && user.password === trimmedPassword);
-
-    if (!user) {
-      Alert.alert(
-        "Login error",
-        "Invalid e-mail or password",
-        [{ text: "OK" }],
-        { cancelable: true }
-      );
-      return;
-    }
-
     setIsSubmitting(true);
-    setTimeout(() => {
+    try {
+      const usersDataString = await AsyncStorage.getItem('users');
+      let usersData: { users: Array<{ user: string; password: string }> } = { users: [] };
+
+      if (usersDataString) {
+        usersData = JSON.parse(usersDataString);
+      }
+
+      const user = usersData.users.find((user) => user.user === trimmedEmail && user.password === trimmedPassword);
+
+      if (!user) {
+        setIsSubmitting(false);
+        Alert.alert(
+          "Login error",
+          "Invalid e-mail or password",
+          [{ text: "OK" }],
+          { cancelable: true }
+        );
+        return;
+      }
+
+      // Zapisz stan użytkownika w Redux
+      const userName = trimmedEmail.split('@')[0]; // Użyj części przed @ jako nazwa użytkownika
+      dispatch(loginAction({ 
+        email: trimmedEmail, 
+        name: userName 
+      }));
+
+      setTimeout(() => {
+        setIsSubmitting(false);
+        // @ts-ignore
+        navigation.replace("Main");
+      }, 800);
+    } catch (err) {
       setIsSubmitting(false);
-      // @ts-ignore
-      navigation.replace("Main");
-    }, 800);
+      setEmailError("Error loading user data. Please try again.");
+    }
 };
-
-
 
 function handleRegister(props: registerProps) {
   const { email, password, confirmPassword, setEmailError, setPasswordError, setConfirmPasswordError, setIsSubmitting, navigation } = props;
@@ -91,13 +110,42 @@ function handleRegister(props: registerProps) {
   }
 
   setIsSubmitting(true);
-  setTimeout(() => {
+  setTimeout(async () => {
     setIsSubmitting(false);
-    navigation.navigate("Login");
+
+    try {
+      const usersDataString = await AsyncStorage.getItem('users');
+      let usersData: { users: Array<{ user: string; password: string }> } = { users: [] };
+
+      if (usersDataString) {
+        usersData = JSON.parse(usersDataString);
+      }
+
+      const existingUser = usersData.users.find((user) => user.user === trimmedEmail);
+      if (existingUser) {
+        setEmailError("User with this email already exists");
+        return;
+      }
+
+      usersData.users.push({
+        user: trimmedEmail,
+        password: trimmedPassword
+      });
+
+      await AsyncStorage.setItem('users', JSON.stringify(usersData));
+
+      Alert.alert(
+        "Registration successful",
+        "Account created successfully! You can now log in.",
+        [{ text: "OK", onPress: () => navigation.navigate("Login") }]
+      );
+    } catch (err) {
+      setEmailError("Error saving user. Please try again.");
+    }
   }, 800);
 };
 
 export {
   handleLogin,
-  handleRegister
+  handleRegister,
 };
