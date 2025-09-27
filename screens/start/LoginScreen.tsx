@@ -1,21 +1,104 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator } from "react-native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 import { Alert } from "react-native";
 
-import type { RootStackParamList } from "../../App";
+import { ThemeContext } from "../../contexts/ThemeContext";
+
+import type { RootStackParamList } from "../../types/navigationTypes";
 
 import usersData from "../../store/users.json";
 
 export default function LoginScreen() {
+  const { theme } = useContext(ThemeContext);
+
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [emailError, setEmailError] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: theme.colors.background,
+      paddingHorizontal: 16,
+    },
+    card: {
+      width: '95%',
+      maxWidth: 420,
+      backgroundColor: theme.colors.secondaryBackground,
+      borderRadius: 12,
+      padding: 20,
+      shadowColor: '#000',
+      shadowOpacity: 0.2,
+      shadowRadius: 12,
+      shadowOffset: { width: 0, height: 8 },
+      elevation: 3,
+    },
+    title: {
+      fontSize: 28,
+      fontWeight: '700',
+      color: theme.colors.text,
+      textAlign: 'center',
+      marginTop: 20,
+      marginBottom: 20,
+    },
+    fieldGroup: {
+      marginTop: 14,
+      marginBottom: 6,
+    },
+    label: {
+      color: theme.colors.labelText,
+      opacity: 0.7,
+      marginBottom: 6,
+      fontSize: 14,
+    },
+    input: {
+      backgroundColor: theme.colors.inputBackground,
+      borderWidth: 1,
+      borderColor: theme.colors.inputBorder,
+      borderRadius: 8,
+      paddingHorizontal: 12,
+      paddingVertical: 12,
+      color: theme.colors.text,
+      fontSize: 16,
+    },
+    error: {
+      color: theme.colors.error,
+      marginTop: 0,
+      marginBottom: 0,
+    },
+    button: {
+      marginTop: 14,
+      backgroundColor: theme.colors.primary,
+      paddingVertical: 14,
+      borderRadius: 10,
+      alignItems: 'center',
+    },
+    buttonDisabled: {
+      opacity: 0.7,
+    },
+    buttonText: {
+      color: '#f3f3f3',
+      fontSize: 16,
+      fontWeight: '600',
+    },
+    registerText: {
+      color: theme.colors.labelText,
+      opacity: 0.7,
+      marginTop: 14,
+      textAlign: 'center',
+    },
+    registerLink: {
+      color: theme.colors.primary,
+    },
+  });
 
   const handleSubmit = () => {
     const trimmedEmail = email.trim();
@@ -65,6 +148,7 @@ export default function LoginScreen() {
           <TextInput
             value={email}
             placeholder="your@email.com"
+            placeholderTextColor={theme.colors.inputPlaceholder}
             autoCapitalize="none"
             keyboardType="email-address"
             textContentType="emailAddress"
@@ -82,6 +166,7 @@ export default function LoginScreen() {
           <TextInput
             value={password}
             placeholder="••••••••"
+            placeholderTextColor={theme.colors.inputPlaceholder}
             secureTextEntry
             textContentType="password"
             autoComplete="password"
@@ -111,88 +196,3 @@ export default function LoginScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#0b0b0d',
-    paddingHorizontal: 16,
-  },
-  card: {
-    width: '95%',
-    maxWidth: 420,
-    backgroundColor: '#131318',
-    borderRadius: 12,
-    padding: 20,
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 8 },
-    elevation: 3,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: '#ffffff',
-    textAlign: 'center',
-    marginTop: 20,
-    marginBottom: 20,
-  },
-  fieldGroup: {
-    marginTop: 14,
-    marginBottom: 6,
-  },
-  label: {
-    color: '#b5b7be',
-    marginBottom: 6,
-    fontSize: 14,
-  },
-  input: {
-    backgroundColor: '#1b1c22',
-    borderWidth: 1,
-    borderColor: '#2a2b33',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 12,
-    color: '#ffffff',
-    fontSize: 16,
-  },
-  error: {
-    color: '#ff6b6b',
-    marginTop: 0,
-    marginBottom: 0,
-  },
-  button: {
-    marginTop: 14,
-    backgroundColor: '#e11d48',
-    paddingVertical: 14,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  buttonDisabled: {
-    opacity: 0.7,
-  },
-  buttonText: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  registerText: {
-    color: '#b5b7be',
-    marginTop: 14,
-    textAlign: 'center',
-  },
-  registerLink: {
-    color: '#e11d48',
-  },
-  forgotPasswordText: {
-    color: '#b5b7be',
-    marginTop: 14,
-    textAlign: 'center',
-  },
-  forgotPasswordLink: {
-    color: '#e11d48',
-  },
-});

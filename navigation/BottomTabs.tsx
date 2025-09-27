@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 
 import HomeScreen from "../screens/main/HomeScreen";
 import DiscoverScreen from "../screens/main/DiscoverScreen";
@@ -6,6 +6,7 @@ import FavouriteScreen from "../screens/main/FavouriteScreen";
 import CommunityScreen from "../screens/main/CommunityScreen";
 import AccountScreen from "../screens/main/AccountScreen";
 
+import { ThemeContext } from "../contexts/ThemeContext";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -14,6 +15,8 @@ type IoniconName = keyof typeof Ionicons.glyphMap;
 const Tab = createBottomTabNavigator();
 
 export default function BottomTabs() {
+  const { theme } = useContext(ThemeContext);
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -38,7 +41,7 @@ export default function BottomTabs() {
         tabBarActiveTintColor: "#e11d48",
         tabBarInactiveTintColor: "gray",
         tabBarStyle: {
-          backgroundColor: "#0b0b0d",
+          backgroundColor: theme.colors.secondaryBackground,
           borderTopWidth: 0,
           borderTopColor: "transparent",
           elevation: 0,
