@@ -61,22 +61,28 @@ function handleRegister(props: registerProps) {
     setEmailError("Enter e-mail");
     return;
   }
+
   if (!/.+@.+\..+/.test(trimmedEmail)) {
     setEmailError("Enter valid e-mail");
     return;
   }
+
   if (!trimmedPassword) {
     setPasswordError("Enter password");
     return;
   }
-  if (trimmedPassword.length < 6) {
-    setPasswordError("Min 6 characters");
+
+  const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{4,}$/;
+  if (!passwordRegex.test(trimmedPassword)) {
+    setPasswordError("Password is weak.\nIt must have at least:\n- 4 characters\n- 1 uppercase letter\n- 1 number\n- 1 special character");
     return;
   }
+
   if (!trimmedConfirm) {
     setConfirmPasswordError("Confirm password");
     return;
   }
+
   if (trimmedPassword !== trimmedConfirm) {
     setConfirmPasswordError("Passwords do not match");
     return;
