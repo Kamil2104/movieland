@@ -28,6 +28,7 @@ async function handleLogin(props: loginProps) {
     }
 
     setIsSubmitting(true);
+
     try {
       const usersDataString = await AsyncStorage.getItem('users');
       let usersData: { users: Array<{ user: string; password: string }> } = { users: [] };
@@ -49,11 +50,10 @@ async function handleLogin(props: loginProps) {
         return;
       }
 
-      // Zapisz stan użytkownika w Redux
-      const userName = trimmedEmail.split('@')[0]; // Użyj części przed @ jako nazwa użytkownika
-      dispatch(loginAction({ 
-        email: trimmedEmail, 
-        name: userName 
+      const userName = trimmedEmail.split('@')[0];
+      dispatch(loginAction({
+        email: trimmedEmail,
+        name: userName
       }));
 
       setTimeout(() => {
