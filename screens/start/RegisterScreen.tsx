@@ -8,6 +8,8 @@ import { ThemeContext } from "../../contexts/ThemeContext";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../../types/navigationTypes";
 
+import { handleRegister } from "../../validation/accountManagement";
+
 export default function RegisterScreen() {
   const { theme } = useContext(ThemeContext);
 
@@ -100,47 +102,6 @@ const styles = StyleSheet.create({
     color: theme.colors.primary,
   },
 });
-
-  const handleSubmit = () => {
-    setEmailError(null);
-    setPasswordError(null);
-    setConfirmPasswordError(null);
-
-    const trimmedEmail = email.trim();
-    const trimmedPassword = password.trim();
-    const trimmedConfirm = confirmPassword.trim();
-
-    if (!trimmedEmail) {
-      setEmailError("Enter e-mail");
-      return;
-    }
-    if (!/.+@.+\..+/.test(trimmedEmail)) {
-      setEmailError("Enter valid e-mail");
-      return;
-    }
-    if (!trimmedPassword) {
-      setPasswordError("Enter password");
-      return;
-    }
-    if (trimmedPassword.length < 6) {
-      setPasswordError("Min 6 characters");
-      return;
-    }
-    if (!trimmedConfirm) {
-      setConfirmPasswordError("Confirm password");
-      return;
-    }
-    if (trimmedPassword !== trimmedConfirm) {
-      setConfirmPasswordError("Passwords do not match");
-      return;
-    }
-
-    setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
-      navigation.navigate("Login");
-    }, 800);
-  };
 
   return (
     <View style={styles.container}>
@@ -246,7 +207,7 @@ const styles = StyleSheet.create({
         {confirmPasswordError ? <Text style={styles.error}>{confirmPasswordError}</Text> : null}
 
         <TouchableOpacity
-          onPress={handleSubmit}
+          onPress={() => handleRegister({ email, password, confirmPassword, setEmailError, setPasswordError, setConfirmPasswordError, setIsSubmitting, navigation })}
           style={[styles.button, isSubmitting && styles.buttonDisabled]}
           activeOpacity={0.8}
           disabled={isSubmitting}

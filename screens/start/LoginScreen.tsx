@@ -3,14 +3,13 @@ import React, { useState, useContext } from "react";
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator } from "react-native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
-import { Alert } from "react-native";
 
 import { ThemeContext } from "../../contexts/ThemeContext";
 
 import type { RootStackParamList } from "../../types/navigationTypes";
 import { Ionicons } from "@expo/vector-icons";
 
-import usersData from "../../store/users.json";
+import { handleLogin } from "../../validation/accountManagement";
 
 export default function LoginScreen() {
   const { theme } = useContext(ThemeContext);
@@ -102,44 +101,6 @@ export default function LoginScreen() {
     },
   });
 
-  const handleSubmit = () => {
-    const trimmedEmail = email.trim();
-    const trimmedPassword = password.trim();
-
-    if (!trimmedEmail) {
-        setEmailError("Enter e-mail");
-      return;
-    } else if (!trimmedPassword) {
-        setPasswordError("Enter password");
-      return;
-    }
-
-    const emailLooksValid = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i.test(trimmedEmail);
-    if (!emailLooksValid) {
-      setEmailError("Enter valid e-mail");
-      return;
-    }
-
-    const user = usersData.users.find((user) => user.user === trimmedEmail && user.password === trimmedPassword);
-
-    if (!user) {
-      Alert.alert(
-        "Login error",
-        "Invalid e-mail or password",
-        [{ text: "OK" }],
-        { cancelable: true }
-      );
-      return;
-    }
-
-    setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
-      // @ts-ignore
-      navigation.replace("Main");
-    }, 800);
-  };
-
   return (
     <View style={styles.container}>
       <View style={styles.card}>
@@ -203,7 +164,7 @@ export default function LoginScreen() {
         {passwordError ? <Text style={styles.error}>{passwordError}</Text> : null}
 
         <TouchableOpacity
-          onPress={handleSubmit}
+          onPress={() => handleLogin({ email, password, setEmailError, setPasswordError, setIsSubmitting, navigation })}
           style={[styles.button, isSubmitting && styles.buttonDisabled]}
           activeOpacity={0.8}
           disabled={isSubmitting}
