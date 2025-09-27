@@ -13,7 +13,9 @@ function handleLogin(props: loginProps) {
     if (!trimmedEmail) {
       setEmailError("Enter e-mail");
       return;
-    } else if (!trimmedPassword) {
+    }
+
+    if (!trimmedPassword) {
       setPasswordError("Enter password");
       return;
     }
@@ -62,13 +64,13 @@ function handleRegister(props: registerProps) {
     return;
   }
 
-  if (!/.+@.+\..+/.test(trimmedEmail)) {
-    setEmailError("Enter valid e-mail");
+  if (!trimmedPassword) {
+    setPasswordError("Enter password");
     return;
   }
 
-  if (!trimmedPassword) {
-    setPasswordError("Enter password");
+  if (!/.+@.+\..+/.test(trimmedEmail)) {
+    setEmailError("Enter valid e-mail");
     return;
   }
 
