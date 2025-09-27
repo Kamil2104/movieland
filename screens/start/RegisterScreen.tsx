@@ -2,6 +2,8 @@ import React, { useState, useContext } from "react";
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import MaskedView from "@react-native-masked-view/masked-view";
 
 import { ThemeContext } from "../../contexts/ThemeContext";
 
@@ -46,13 +48,36 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 8 },
     elevation: 3,
   },
+  titleContainer: {
+    alignItems: 'center',
+    marginTop: 20,
+    marginBottom: 30,
+  },
   title: {
     fontSize: 28,
     fontWeight: '700',
     color: theme.colors.text,
     textAlign: 'center',
-    marginTop: 20,
-    marginBottom: 20,
+    marginBottom: 4,
+  },
+  brandName: {
+    fontSize: 32,
+    fontWeight: '800',
+    textAlign: 'center',
+    letterSpacing: 1,
+    marginBottom: 8,
+  },
+  gradientText: {
+    paddingHorizontal: 0,
+    paddingVertical: 0,
+  },
+  subtitle: {
+    fontSize: 16,
+    fontWeight: '400',
+    color: theme.colors.labelText,
+    textAlign: 'center',
+    opacity: 0.8,
+    lineHeight: 22,
   },
   fieldGroup: {
     marginTop: 14,
@@ -106,7 +131,23 @@ const styles = StyleSheet.create({
   return (
     <View style={styles.container}>
       <View style={styles.card}>
-        <Text style={styles.title}>Create your movieland account</Text>
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>Welcome to</Text>
+          <MaskedView
+            style={{ height: 40, width: '100%' }}
+            maskElement={
+              <Text style={styles.brandName}>MovieLand</Text>
+            }
+          >
+            <LinearGradient
+              colors={[theme.colors.primary, theme.colors.primary, '#ff6b6b', theme.colors.primary]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={{ flex: 1 }}
+            />
+          </MaskedView>
+          <Text style={styles.subtitle}>Create your account to start exploring</Text>
+        </View>
 
         <View style={styles.fieldGroup}>
           <Text style={styles.label}>E-mail</Text>

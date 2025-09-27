@@ -11,10 +11,10 @@ function handleLogin(props: loginProps) {
     const trimmedPassword = password.trim();
 
     if (!trimmedEmail) {
-        setEmailError("Enter e-mail");
+      setEmailError("Enter e-mail");
       return;
     } else if (!trimmedPassword) {
-        setPasswordError("Enter password");
+      setPasswordError("Enter password");
       return;
     }
 

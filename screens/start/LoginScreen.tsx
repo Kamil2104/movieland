@@ -8,6 +8,8 @@ import { ThemeContext } from "../../contexts/ThemeContext";
 
 import type { RootStackParamList } from "../../types/navigationTypes";
 import { Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import MaskedView from "@react-native-masked-view/masked-view";
 
 import { handleLogin } from "../../validation/accountManagement";
 
@@ -48,7 +50,22 @@ export default function LoginScreen() {
       color: theme.colors.text,
       textAlign: 'center',
       marginTop: 20,
-      marginBottom: 20,
+      marginBottom: 0,
+    },
+    brandName: {
+      fontSize: 32,
+      fontWeight: '800',
+      textAlign: 'center',
+      letterSpacing: 1,
+      marginBottom: 0,
+    },
+    subtitle: {
+      fontSize: 16,
+      fontWeight: '400',
+      color: theme.colors.labelText,
+      textAlign: 'center',
+      opacity: 0.8,
+      lineHeight: 22,
     },
     fieldGroup: {
       marginTop: 14,
@@ -104,7 +121,23 @@ export default function LoginScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.card}>
-        <Text style={styles.title}>Log in to movieland!</Text>
+        <View style={{ alignItems: 'center', marginTop: 20, marginBottom: 20 }}>
+          <Text style={styles.title}>Welcome back to</Text>
+          <MaskedView
+            style={{ height: 40, width: '100%' }}
+            maskElement={
+              <Text style={styles.brandName}>MovieLand</Text>
+            }
+          >
+            <LinearGradient
+              colors={[theme.colors.primary, theme.colors.primary, '#ff6b6b', theme.colors.primary]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={{ flex: 1 }}
+            />
+          </MaskedView>
+          <Text style={styles.subtitle}>Sign in to continue your journey</Text>
+        </View>
 
         <View style={styles.fieldGroup}>
           <Text style={styles.label}>E-mail</Text>
