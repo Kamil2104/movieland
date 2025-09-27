@@ -114,9 +114,9 @@ export default function LoginScreen() {
       return;
     }
 
-    const emailLooksValid = /.+@.+\..+/.test(trimmedEmail);
+    const emailLooksValid = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i.test(trimmedEmail);
     if (!emailLooksValid) {
-        setEmailError("Enter valid e-mail");
+      setEmailError("Enter valid e-mail");
       return;
     }
 
