@@ -8,6 +8,7 @@ import { Alert } from "react-native";
 import { ThemeContext } from "../../contexts/ThemeContext";
 
 import type { RootStackParamList } from "../../types/navigationTypes";
+import { Ionicons } from "@expo/vector-icons";
 
 import usersData from "../../store/users.json";
 
@@ -20,6 +21,7 @@ export default function LoginScreen() {
   const [emailError, setEmailError] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const styles = StyleSheet.create({
     container: {
@@ -160,20 +162,42 @@ export default function LoginScreen() {
         </View>
 
         {emailError ? <Text style={styles.error}>{emailError}</Text> : null}
-
         <View style={styles.fieldGroup}>
           <Text style={styles.label}>Password</Text>
-          <TextInput
-            value={password}
-            placeholder="••••••••"
-            placeholderTextColor={theme.colors.inputPlaceholder}
-            secureTextEntry
-            textContentType="password"
-            autoComplete="password"
-            style={styles.input}
-            editable={!isSubmitting}
-            onChangeText={(text) => { setPassword(text); setPasswordError(null); }}
-        />
+          <View style={{ position: 'relative', justifyContent: 'center' }}>
+            <TextInput
+              value={password}
+              placeholder="••••••••"
+              placeholderTextColor={theme.colors.inputPlaceholder}
+              secureTextEntry={!showPassword}
+              keyboardType="ascii-capable"
+              textContentType="password"
+              autoComplete="password"
+              style={styles.input}
+              editable={!isSubmitting}
+              onChangeText={(text) => { setPassword(text); setPasswordError(null); }}
+            />
+            <TouchableOpacity
+              onPress={() => setShowPassword((prev) => !prev)}
+              style={{
+                position: 'absolute',
+                right: 12,
+                top: 0,
+                bottom: 0,
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '100%',
+              }}
+              disabled={isSubmitting}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            >
+              <Ionicons
+                name={showPassword ? "eye-off" : "eye"}
+                size={22}
+                color={theme.colors.inputPlaceholder}
+              />
+            </TouchableOpacity>
+          </View>
         </View>
 
         {passwordError ? <Text style={styles.error}>{passwordError}</Text> : null}

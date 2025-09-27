@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
 
 import { ThemeContext } from "../../contexts/ThemeContext";
 
@@ -20,6 +21,8 @@ export default function RegisterScreen() {
   const [confirmPasswordError, setConfirmPasswordError] = useState<string | null>(null);
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
 
 const styles = StyleSheet.create({
   container: {
@@ -164,34 +167,80 @@ const styles = StyleSheet.create({
 
         <View style={styles.fieldGroup}>
           <Text style={styles.label}>Password</Text>
-          <TextInput
-            value={password}
-            placeholder="••••••••"
-            placeholderTextColor={theme.colors.inputPlaceholder}
-            secureTextEntry
-            textContentType="password"
-            autoComplete="password-new"
-            style={styles.input}
-            editable={!isSubmitting}
-            onChangeText={(text) => { setPassword(text); setPasswordError(null); }}
-          />
+          <View style={{ position: 'relative', justifyContent: 'center' }}>
+            <TextInput
+              value={password}
+              placeholder="••••••••"
+              placeholderTextColor={theme.colors.inputPlaceholder}
+              secureTextEntry={!showPassword}
+              keyboardType="ascii-capable"
+              textContentType="password"
+              autoComplete="password-new"
+              style={styles.input}
+              editable={!isSubmitting}
+              onChangeText={(text) => { setPassword(text); setPasswordError(null); }}
+            />
+            <TouchableOpacity
+              onPress={() => setShowPassword((prev) => !prev)}
+              style={{
+                position: 'absolute',
+                right: 12,
+                top: 0,
+                bottom: 0,
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '100%',
+              }}
+              disabled={isSubmitting}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            >
+              <Ionicons
+                name={showPassword ? "eye-off" : "eye"}
+                size={22}
+                color={theme.colors.inputPlaceholder}
+              />
+            </TouchableOpacity>
+          </View>
         </View>
 
         {passwordError ? <Text style={styles.error}>{passwordError}</Text> : null}
 
         <View style={styles.fieldGroup}>
           <Text style={styles.label}>Confirm password</Text>
-          <TextInput
-            value={confirmPassword}
-            placeholder="••••••••"
-            placeholderTextColor={theme.colors.inputPlaceholder}
-            secureTextEntry
-            textContentType="password"
-            autoComplete="password-new"
-            style={styles.input}
-            editable={!isSubmitting}
-            onChangeText={(text) => { setConfirmPassword(text); setConfirmPasswordError(null); }}
-          />
+          <View style={{ position: 'relative', justifyContent: 'center' }}>
+            <TextInput
+              value={confirmPassword}
+              placeholder="••••••••"
+              placeholderTextColor={theme.colors.inputPlaceholder}
+              secureTextEntry={!showConfirmPassword}
+              keyboardType="ascii-capable"
+              textContentType="password"
+              autoComplete="password-new"
+              style={styles.input}
+              editable={!isSubmitting}
+              onChangeText={(text) => { setConfirmPassword(text); setConfirmPasswordError(null); }}
+            />
+            <TouchableOpacity
+              onPress={() => setShowConfirmPassword((prev) => !prev)}
+              style={{
+                position: 'absolute',
+                right: 12,
+                top: 0,
+                bottom: 0,
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '100%',
+              }}
+              disabled={isSubmitting}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            >
+              <Ionicons
+                name={showConfirmPassword ? "eye-off" : "eye"}
+                size={22}
+                color={theme.colors.inputPlaceholder}
+              />
+            </TouchableOpacity>
+          </View>
         </View>
 
         {confirmPasswordError ? <Text style={styles.error}>{confirmPasswordError}</Text> : null}
