@@ -52,7 +52,7 @@ export default function BottomTabs() {
           tabBarIndicatorStyle: { height: 0 },
           tabBarStyle: {
             backgroundColor: theme.colors.secondaryBackground,
-            height: 60,
+            height: 65,
             borderTopWidth: 0,
             elevation: 0,
             shadowOpacity: 0,

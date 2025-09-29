@@ -19,7 +19,6 @@ export default function CommunityScreen() {
       color: theme.colors.text,
     }
   });
-  
 
   return (
     <View style={styles.container}>
