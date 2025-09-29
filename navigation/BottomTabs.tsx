@@ -1,4 +1,6 @@
 import React, { useContext } from "react";
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import { Ionicons } from "@expo/vector-icons";
 
 import HomeScreen from "../screens/main/HomeScreen";
 import DiscoverScreen from "../screens/main/DiscoverScreen";
@@ -7,47 +9,58 @@ import CommunityScreen from "../screens/main/CommunityScreen";
 import AccountScreen from "../screens/main/AccountScreen";
 
 import { ThemeContext } from "../contexts/ThemeContext";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Ionicons } from "@expo/vector-icons";
 
 type IoniconName = keyof typeof Ionicons.glyphMap;
 
-const Tab = createBottomTabNavigator();
+const Tab = createMaterialTopTabNavigator();
 
 export default function BottomTabs() {
   const { theme } = useContext(ThemeContext);
 
   return (
     <Tab.Navigator
-      screenOptions={({ route }) => ({
-        headerShown: false,
-        tabBarIcon: ({ focused, color, size }) => {
-          let iconName: IoniconName = "ellipse";
+      tabBarPosition="bottom"
+      screenOptions={({ route }) => {
+        let iconName: IoniconName = "ellipse";
 
-          if (route.name === "Home") {
-            iconName = focused ? "home" : "home-outline";
-          } else if (route.name === "Discover") {
-            iconName = focused ? "search" : "search-outline";
-          } else if (route.name === "Favourites") {
-            iconName = focused ? "heart" : "heart-outline";
-          } else if (route.name === "Community") {
-            iconName = focused ? "people" : "people-outline";
-          } else if (route.name === "Account") {
-            iconName = focused ? "person" : "person-outline";
-          }
+        if (route.name === "Home") {
+          iconName = "home-outline";
+        } else if (route.name === "Discover") {
+          iconName = "search-outline";
+        } else if (route.name === "Favourites") {
+          iconName = "heart-outline";
+        } else if (route.name === "Community") {
+          iconName = "people-outline";
+        } else if (route.name === "Account") {
+          iconName = "person-outline";
+        }
 
-          return <Ionicons name={iconName} size={size} color={color} />;
-        },
-        tabBarActiveTintColor: "#e11d48",
-        tabBarInactiveTintColor: "gray",
-        tabBarStyle: {
-          backgroundColor: theme.colors.secondaryBackground,
-          borderTopWidth: 0,
-          borderTopColor: "transparent",
-          elevation: 0,
-          shadowOpacity: 0,
-        },
-      })}
+        return {
+          swipeEnabled: true,
+          tabBarShowLabel: false,
+          tabBarIcon: ({ focused, color }) => (
+            <Ionicons
+              name={
+                focused
+                  ? (iconName.replace("-outline", "") as IoniconName)
+                  : iconName
+              }
+              size={24}
+              color={color}
+            />
+          ),
+          tabBarIndicatorStyle: { height: 0 },
+          tabBarStyle: {
+            backgroundColor: theme.colors.secondaryBackground,
+            height: 60,
+            borderTopWidth: 0,
+            elevation: 0,
+            shadowOpacity: 0,
+          },
+          tabBarActiveTintColor: "#e11d48",
+          tabBarInactiveTintColor: "gray",
+        };
+      }}
     >
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Discover" component={DiscoverScreen} />
