@@ -3,3 +3,8 @@ export type RootStackParamList = {
     Register: undefined;
     Main: undefined;
 };
+
+export type AccountStackParamList = {
+    AccountMain: undefined;
+    OptionsScreen: { title: string, options: string[] };
+};

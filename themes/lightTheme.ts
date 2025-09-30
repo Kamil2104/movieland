@@ -10,6 +10,7 @@ const lightTheme = {
     inputBackground: '#f3f3f3',
     inputBorder: '#cccccc',
     inputPlaceholder: '#888888',
+    divider: '#e0e0e0',
     error: '#ff6b6b',
   },
 };

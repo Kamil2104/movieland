@@ -10,6 +10,7 @@ const darkTheme = {
     inputBackground: '#1b1c22',
     inputBorder: '#2a2b33',
     inputPlaceholder: '#444654',
+    divider: '#18181d',
     error: '#ff6b6b',
   },
 };

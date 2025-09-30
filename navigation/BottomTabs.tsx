@@ -6,7 +6,7 @@ import HomeScreen from "../screens/main/HomeScreen";
 import DiscoverScreen from "../screens/main/DiscoverScreen";
 import FavouriteScreen from "../screens/main/FavouriteScreen";
 import CommunityScreen from "../screens/main/CommunityScreen";
-import AccountScreen from "../screens/main/AccountScreen";
+import AccountStack from "./AccountStack";
 
 import { ThemeContext } from "../contexts/ThemeContext";
 
@@ -66,7 +66,7 @@ export default function BottomTabs() {
       <Tab.Screen name="Discover" component={DiscoverScreen} />
       <Tab.Screen name="Favourites" component={FavouriteScreen} />
       <Tab.Screen name="Community" component={CommunityScreen} />
-      <Tab.Screen name="Account" component={AccountScreen} />
+      <Tab.Screen name="Account" component={AccountStack} />
     </Tab.Navigator>
   );
 }

@@ -5,9 +5,18 @@ import { ThemeContext } from '../../contexts/ThemeContext';
 import { useAppSelector } from '../../store/hooks';
 
 import { Ionicons } from '@expo/vector-icons';
+import DropdownList from '../../components/DropdownList';
+
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useNavigation } from '@react-navigation/native';
+import { AccountStackParamList } from '../../types/navigationTypes';
+
+type NavigationProp = NativeStackNavigationProp<AccountStackParamList, 'AccountMain'>;
 
 export default function AccountScreen() {
   const { theme } = useContext(ThemeContext);
+
+  const navigation = useNavigation<NavigationProp>();
 
   const styles = StyleSheet.create({
     container: {
@@ -31,7 +40,6 @@ export default function AccountScreen() {
       shadowOpacity: 0.25,
       shadowRadius: 4,
       elevation: 5,
-      marginBottom: 30,
       position: 'relative',
     },
     userInfoContainer: {
@@ -54,11 +62,36 @@ export default function AccountScreen() {
       top: -8,
       right: -8,
     },
+    options: {
+      height: 'auto',
+      width: '100%',
+      flexDirection: 'column',
+    }
   });
 
   return (
     <View style={styles.container}>
       <Profile styles={styles} />
+      <View style={styles.options}>
+        <DropdownList
+          title='Appearance'
+          selectedOption='System'
+          style='start'
+          onPress={() => navigation.navigate("OptionsScreen", { title: 'Appearance', options: ["System", "Dark", "Light"] })}
+        />
+        <DropdownList
+          title='Stay logged in'
+          selectedOption='Always'
+          style='center'
+          onPress={() => navigation.navigate("OptionsScreen", { title: 'Stay logged in', options: ["Always", "Never"] })}
+        />
+        <DropdownList
+          title='Default homepage'
+          selectedOption='Home'
+          style='end'
+          onPress={() => navigation.navigate("OptionsScreen", { title: 'Default homepage', options: ["Home", "Discover", "Favourites", "Community"] })}
+        />
+      </View>
     </View>
   );
 }
