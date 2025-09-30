@@ -35,7 +35,7 @@ export default function DropdownList(props: DropdownListProps) {
             borderBottomColor: theme.colors.divider,
         },
         title: {
-          fontSize: 18,
+          fontSize: 16,
           fontWeight: '500',
           color: theme.colors.text,
         },

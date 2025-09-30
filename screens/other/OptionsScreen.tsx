@@ -48,17 +48,18 @@ export default function OptionsScreen() {
     },
     option: {
       width: '100%',
-      height: 'auto',
+      height: 50,
       justifyContent: 'space-between',
       alignItems: 'center',
       flexDirection: 'row',
       backgroundColor: theme.colors.cardBackground,
-      padding: 15,
+      paddingVertical: 10,
+      paddingHorizontal: 15,
       borderBottomWidth: 1,
       borderBottomColor: theme.colors.divider,
     },
     optionTitle: {
-      fontSize: 18,
+      fontSize: 16,
       fontWeight: '500',
       color: theme.colors.text,
     },
@@ -93,7 +94,7 @@ export default function OptionsScreen() {
             onPress={() => onPress(option)}
           >
             <Text style={styles.optionTitle}> {option} </Text>
-            {option === selectedOption && <Ionicons name="checkmark-circle" size={22} color={theme.colors.primary} />}
+            {option === selectedOption && <Ionicons name="checkmark-circle" size={28} color={theme.colors.primary} />}
           </TouchableOpacity>
         );
       })}
