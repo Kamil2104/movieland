@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
-import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import { View } from "react-native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 
 import HomeScreen from "../screens/main/HomeScreen";
@@ -12,14 +13,13 @@ import { ThemeContext } from "../contexts/ThemeContext";
 
 type IoniconName = keyof typeof Ionicons.glyphMap;
 
-const Tab = createMaterialTopTabNavigator();
+const Tab = createBottomTabNavigator();
 
 export default function BottomTabs() {
   const { theme } = useContext(ThemeContext);
 
   return (
     <Tab.Navigator
-      tabBarPosition="bottom"
       screenOptions={({ route }) => {
         let iconName: IoniconName = "ellipse";
 
@@ -36,18 +36,30 @@ export default function BottomTabs() {
         }
 
         return {
-          swipeEnabled: true,
+          headerShown: false,
           tabBarShowLabel: false,
           tabBarIcon: ({ focused, color }) => (
-            <Ionicons
-              name={
-                focused
-                  ? (iconName.replace("-outline", "") as IoniconName)
-                  : iconName
-              }
-              size={24}
-              color={color}
-            />
+            <View
+              style={{
+                width: '150%',
+                borderTopWidth: focused ? 2 : 0,
+                borderTopColor: focused ? "#e11d48" : "transparent",
+                alignItems: "center",
+                justifyContent: "center",
+                flex: 1,
+                paddingTop: 5,
+              }}
+            >
+              <Ionicons
+                name={
+                  focused
+                    ? (iconName.replace("-outline", "") as IoniconName)
+                    : iconName
+                }
+                size={24}
+                color={color}
+              />
+            </View>
           ),
           tabBarIndicatorStyle: { height: 0 },
           tabBarStyle: {
