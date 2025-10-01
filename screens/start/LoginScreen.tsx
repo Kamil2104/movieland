@@ -1,6 +1,6 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useRef } from "react";
 
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator } from "react-native";
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator, Keyboard, TouchableWithoutFeedback } from "react-native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 
@@ -25,6 +25,8 @@ export default function LoginScreen() {
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
+
+  const passwordInputRef = useRef<TextInput>(null);
 
   const styles = StyleSheet.create({
     container: {
@@ -121,8 +123,9 @@ export default function LoginScreen() {
   });
 
   return (
-    <View style={styles.container}>
-      <View style={styles.card}>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <View style={styles.container}>
+        <View style={styles.card}>
         <View style={{ alignItems: 'center', marginTop: 20, marginBottom: 20 }}>
           <Text style={styles.title}>Welcome back to</Text>
           <MaskedView
@@ -154,6 +157,9 @@ export default function LoginScreen() {
             style={styles.input}
             editable={!isSubmitting}
             onChangeText={(text) => { setEmail(text); setEmailError(null); }}
+            returnKeyType="next"
+            blurOnSubmit={false}
+            onSubmitEditing={() => passwordInputRef.current?.focus()}
           />
         </View>
 
@@ -162,6 +168,7 @@ export default function LoginScreen() {
           <Text style={styles.label}>Password</Text>
           <View style={{ position: 'relative', justifyContent: 'center' }}>
             <TextInput
+              ref={passwordInputRef}
               value={password}
               placeholder="••••••••"
               placeholderTextColor={theme.colors.inputPlaceholder}
@@ -172,6 +179,7 @@ export default function LoginScreen() {
               style={styles.input}
               editable={!isSubmitting}
               onChangeText={(text) => { setPassword(text); setPasswordError(null); }}
+              returnKeyType="done"
             />
             <TouchableOpacity
               onPress={() => setShowPassword((prev) => !prev)}
@@ -212,7 +220,8 @@ export default function LoginScreen() {
         </TouchableOpacity>
 
         <Text style={styles.registerText}>Don't have an account? <Text style={styles.registerLink} onPress={() => navigation.navigate("Register")}>Register</Text></Text>
+        </View>
       </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 }
