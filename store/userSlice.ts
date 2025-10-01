@@ -7,40 +7,71 @@ export interface UserState {
   userName: string | null;
 }
 
+interface StoredUsers {
+  [email: string]: UserState;
+}
+
 export const saveUserToStorage = async (userData: { email: string; name: string }) => {
   try {
-    await AsyncStorage.setItem('userData', JSON.stringify({
+    const existingData = await AsyncStorage.getItem("users");
+    let users: StoredUsers = existingData ? JSON.parse(existingData) : {};
+
+    const userState: UserState = {
       isLoggedIn: true,
       userEmail: userData.email,
-      userName: userData.name
-    }));
+      userName: userData.name,
+    };
+
+    users[userData.email] = userState;
+
+    await AsyncStorage.setItem("users", JSON.stringify(users));
+    await AsyncStorage.setItem("lastUser", JSON.stringify(userState));
   } catch (error) {
-    console.error('Error saving user to storage:', error);
+    console.error("Error saving user to storage:", error);
   }
 };
 
-export const clearUserFromStorage = async () => {
+export const logoutUserInStorage = async (email: string) => {
   try {
-    await AsyncStorage.removeItem('userData');
-  } catch (error) {
-    console.error('Error clearing user from storage:', error);
-  }
-};
+    const existingData = await AsyncStorage.getItem("users");
+    if (!existingData) return;
 
-export const loadUserFromStorage = async (): Promise<UserState> => {
-  try {
-    const userData = await AsyncStorage.getItem('userData');
-    if (userData) {
-      return JSON.parse(userData);
+    let users: StoredUsers = JSON.parse(existingData);
+
+    if (users[email]) {
+      users[email].isLoggedIn = false;
+    }
+
+    await AsyncStorage.setItem("users", JSON.stringify(users));
+
+    const lastUserString = await AsyncStorage.getItem("lastUser");
+    if (lastUserString) {
+      const lastUser: UserState = JSON.parse(lastUserString);
+      if (lastUser.userEmail === email) {
+        const loggedInUsers = Object.values(users).filter(u => u.isLoggedIn);
+        if (loggedInUsers.length > 0) {
+          await AsyncStorage.setItem("lastUser", JSON.stringify(loggedInUsers[0]));
+        } else {
+          await AsyncStorage.removeItem("lastUser");
+        }
+      }
     }
   } catch (error) {
-    console.error('Error loading user from storage:', error);
+    console.error("Error logging out user:", error);
   }
-  return {
-    isLoggedIn: false,
-    userEmail: null,
-    userName: null,
-  };
+};
+
+export const loadLastUserFromStorage = async (): Promise<UserState> => {
+  try {
+    const lastUserString = await AsyncStorage.getItem("lastUser");
+    if (!lastUserString) return { isLoggedIn: false, userEmail: null, userName: null };
+
+    const lastUser: UserState = JSON.parse(lastUserString);
+    return lastUser;
+  } catch (error) {
+    console.error("Error loading last user:", error);
+    return { isLoggedIn: false, userEmail: null, userName: null };
+  }
 };
 
 const initialState: UserState = {
@@ -61,11 +92,12 @@ const userSlice = createSlice({
       saveUserToStorage(action.payload);
     },
     logout: (state) => {
+      logoutUserInStorage(state.userEmail || '');
+
       state.isLoggedIn = false;
       state.userEmail = null;
       state.userName = null;
 
-      clearUserFromStorage();
     },
     setUserFromStorage: (state, action: PayloadAction<UserState>) => {
       state.isLoggedIn = action.payload.isLoggedIn;

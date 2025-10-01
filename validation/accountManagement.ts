@@ -115,7 +115,7 @@ function handleRegister(props: registerProps) {
 
     try {
       const usersDataString = await AsyncStorage.getItem('users');
-      let usersData: { users: Array<{ user: string; password: string }> } = { users: [] };
+      let usersData: { users: Array<{ isLoggedIn: boolean; user: string; password: string }> } = { users: [] };
 
       if (usersDataString) {
         usersData = JSON.parse(usersDataString);
@@ -128,6 +128,7 @@ function handleRegister(props: registerProps) {
       }
 
       usersData.users.push({
+        isLoggedIn: false,
         user: trimmedEmail,
         password: trimmedPassword
       });

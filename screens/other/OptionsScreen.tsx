@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { ThemeContext } from "../../contexts/ThemeContext";
 
 import { useRoute, useNavigation } from "@react-navigation/native";
-import { useAppDispatch } from "../../store/hooks";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
 
 import { updateAppearance, updateStayLoggedIn, updateDefaultHomepage } from "../../store/settingsSlice";
 
@@ -22,6 +22,7 @@ export default function OptionsScreen() {
     options: string[];
     selectedOptionParam: string
   };
+  const userEmail = useAppSelector((state) => state.user.userEmail || '');
 
   const [selectedOption, setSelectedOption] = useState<string>(selectedOptionParam)
 
@@ -30,13 +31,13 @@ export default function OptionsScreen() {
 
     switch(stateKey) {
       case "appearance":
-        dispatch(updateAppearance(opt));
+        dispatch(updateAppearance(userEmail, opt));
         break;
       case "stayLoggedIn":
-        dispatch(updateStayLoggedIn(opt));
+        dispatch(updateStayLoggedIn(userEmail, opt));
         break;
       case "defaultHomepage":
-        dispatch(updateDefaultHomepage(opt));
+        dispatch(updateDefaultHomepage(userEmail, opt));
         break;
     }
   }

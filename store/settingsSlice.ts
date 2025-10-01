@@ -9,19 +9,23 @@ export interface AccountSettingsState {
   defaultHomepage: "Home" | "Discover" | "Favourites" | "Community" | undefined;
 }
 
-export const saveAccountSettings = async (state: AccountSettingsState) => {
+export const saveAccountSettingsForUser = async (email: string, state: AccountSettingsState) => {
   try {
-    await AsyncStorage.setItem("accountSettings", JSON.stringify(state));
+    const existingData = await AsyncStorage.getItem("accountSettings");
+    const allSettings = existingData ? JSON.parse(existingData) : {};
+    allSettings[email] = state;
+    await AsyncStorage.setItem("accountSettings", JSON.stringify(allSettings));
   } catch (error) {
     console.error("Failed to save account settings", error);
   }
 };
 
-export const loadAccountSettings = async (): Promise<AccountSettingsState> => {
+export const loadAccountSettingsForUser = async (email: string): Promise<AccountSettingsState> => {
   try {
-    const accountSettings = await AsyncStorage.getItem("accountSettings");
-    if (accountSettings) {
-      return JSON.parse(accountSettings);
+    const existingData = await AsyncStorage.getItem("accountSettings");
+    if (existingData) {
+      const allSettings = JSON.parse(existingData);
+      if (allSettings[email]) return allSettings[email];
     }
   } catch (error) {
     console.error("Failed to load account settings", error);
@@ -62,34 +66,40 @@ const accountSettingsSlice = createSlice({
       state.appearance = action.payload.appearance;
       state.stayLoggedIn = action.payload.stayLoggedIn;
       state.defaultHomepage = action.payload.defaultHomepage;
-    }
+    },
+    resetSettings: (state) => {
+      state.userName = "";
+      state.appearance = "System";
+      state.stayLoggedIn = "Always";
+      state.defaultHomepage = "Home";
+    },
   },
 });
 
 // Thunks for auto-save
-export const updateUserName = (name: string) => async (dispatch: AppDispatch, getState: () => RootState) => {
+export const updateUserName = (email: string, name: string) => async (dispatch: AppDispatch, getState: () => RootState) => {
   dispatch(setUserName(name));
   const state = getState().accountSettings;
-  await saveAccountSettings(state);
+  await saveAccountSettingsForUser(email, state);
 };
 
-export const updateAppearance = (appearance: AccountSettingsState["appearance"]) => async (dispatch: AppDispatch, getState: () => RootState) => {
+export const updateAppearance = (email: string, appearance: AccountSettingsState["appearance"]) => async (dispatch: AppDispatch, getState: () => RootState) => {
   dispatch(setAppearance(appearance));
   const state = getState().accountSettings;
-  await saveAccountSettings(state);
+  await saveAccountSettingsForUser(email, state);
 };
 
-export const updateStayLoggedIn = (stayLoggedIn: AccountSettingsState["stayLoggedIn"]) => async (dispatch: AppDispatch, getState: () => RootState) => {
+export const updateStayLoggedIn = (email: string, stayLoggedIn: AccountSettingsState["stayLoggedIn"]) => async (dispatch: AppDispatch, getState: () => RootState) => {
   dispatch(setStayLoggedIn(stayLoggedIn));
   const state = getState().accountSettings;
-  await saveAccountSettings(state);
+  await saveAccountSettingsForUser(email, state);
 };
 
-export const updateDefaultHomepage = (homepage: AccountSettingsState["defaultHomepage"]) => async (dispatch: AppDispatch, getState: () => RootState) => {
+export const updateDefaultHomepage = (email: string, homepage: AccountSettingsState["defaultHomepage"]) => async (dispatch: AppDispatch, getState: () => RootState) => {
   dispatch(setDefaultHomepage(homepage));
   const state = getState().accountSettings;
-  await saveAccountSettings(state);
+  await saveAccountSettingsForUser(email, state);
 };
 
-export const { setAppearance, setStayLoggedIn, setDefaultHomepage, setUserName, setSettingsFromStorage } = accountSettingsSlice.actions;
+export const { setAppearance, setStayLoggedIn, setDefaultHomepage, setUserName, setSettingsFromStorage, resetSettings } = accountSettingsSlice.actions;
 export default accountSettingsSlice.reducer;

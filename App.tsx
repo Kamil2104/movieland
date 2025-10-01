@@ -13,8 +13,8 @@ import BottomTabs from './navigation/BottomTabs';
 
 import { ThemeProvider } from './contexts/ThemeContext';
 import { store, RootState } from './store';
-import { loadUserFromStorage, setUserFromStorage } from './store/userSlice';
-import { loadAccountSettings, setSettingsFromStorage, setUserName } from './store/settingsSlice';
+import { loadLastUserFromStorage, setUserFromStorage } from './store/userSlice';
+import { loadAccountSettingsForUser, setSettingsFromStorage, setUserName, resetSettings } from './store/settingsSlice';
 
 import type { RootStackParamList } from './types/navigationTypes';
 
@@ -26,17 +26,18 @@ function AppNavigator() {
 
   // If user consents (in accountSettingsReducer), then check, otherwise set to false
   const isLoggedIn = useSelector((state: RootState) => state.user.isLoggedIn);
+  const userEmail = useSelector((state: RootState) => state.user.userEmail);
 
   useEffect(() => {
     const initializeApp = async () => {
       try {
-        const userData = await loadUserFromStorage();
+        const userData = await loadLastUserFromStorage();
         if (userData) {
           dispatch(setUserFromStorage(userData));
           dispatch(setUserName(userData.userName || ''));
         }
 
-        const accountSettings = await loadAccountSettings();
+        const accountSettings = await loadAccountSettingsForUser(userData.userEmail || '');
         if (accountSettings) {
           dispatch(setSettingsFromStorage(accountSettings));
         }
@@ -49,6 +50,26 @@ function AppNavigator() {
 
     initializeApp();
   }, [dispatch]);
+
+  useEffect(() => {
+    const loadSettingsForUser = async () => {
+      try {
+        dispatch(resetSettings());
+        if (userEmail) {
+          const accountSettings = await loadAccountSettingsForUser(userEmail);
+          if (accountSettings) {
+            dispatch(setSettingsFromStorage(accountSettings));
+          }
+        }
+      } catch (error) {
+        console.error('Error loading settings for user:', error);
+      }
+    };
+
+    if (isLoggedIn && userEmail) {
+      loadSettingsForUser();
+    }
+  }, [dispatch, isLoggedIn, userEmail]);
 
   if (!isAppReady) {
     return (

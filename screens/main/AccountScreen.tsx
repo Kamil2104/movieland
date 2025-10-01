@@ -1,9 +1,9 @@
 import React, { useContext } from 'react';
-import { StyleSheet, Text, View, TextInput } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert } from 'react-native';
 
 import { ThemeContext } from '../../contexts/ThemeContext';
 
-import { useAppSelector } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -12,11 +12,14 @@ import DropdownList from '../../components/DropdownList';
 
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
-import { AccountStackParamList } from '../../types/navigationTypes';
+import { AccountStackParamList, RootStackParamList } from '../../types/navigationTypes';
+
+import { logout } from '../../store/userSlice';
 
 import { spacing } from '../../styles/spacing';
 
 type NavigationProp = NativeStackNavigationProp<AccountStackParamList, 'AccountMain'>;
+type NavigationPropLogin = NativeStackNavigationProp<RootStackParamList, 'Login'>;
 
 export default function AccountScreen() {
   const { theme } = useContext(ThemeContext);
@@ -98,6 +101,26 @@ export default function AccountScreen() {
       height: 'auto',
       width: '100%',
       flexDirection: 'column',
+    },
+    logoutButton: {
+      width: '100%',
+      backgroundColor: theme.colors.cardBackground,
+      borderRadius: 20,
+      paddingVertical: 15,
+      paddingHorizontal: spacing.padding,
+    },
+    logoutContainer: {
+      width: '100%',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      backgroundColor: theme.colors.cardBackground,
+      borderRadius: 20,
+    },
+    logoutText: {
+      fontSize: 16,
+      fontWeight: '500',
+      color: theme.colors.error,
     }
   });
 
@@ -124,6 +147,7 @@ export default function AccountScreen() {
           onPress={() => handleDefaultHomepageUpdate()}
         />
       </View>
+      <Logout styles={styles} />
     </SafeAreaView>
   );
 }
@@ -160,5 +184,34 @@ const Profile = (props: { styles: any }) => {
         style={styles.editIcon}
       />
     </View>
+  );
+};
+
+const Logout = (props: { styles: any }) => {
+  const { styles } = props;
+  const { theme } = useContext(ThemeContext);
+
+  const dispatch = useAppDispatch();
+  const navigationLogin = useNavigation<NavigationPropLogin>();
+
+  const handleLogout = () => {
+    Alert.alert(
+      "Confirm Logout",
+      "Do you really want to log out of your account?",
+      [
+        { text: "Stay Logged In", style: "cancel" },
+        { text: "Log Out", style: "destructive", onPress: () => { dispatch(logout()); navigationLogin.replace("Login"); } }
+      ],
+      { cancelable: true }
+    );
+  }
+
+  return (
+    <TouchableOpacity style={styles.logoutButton} onPress={() => handleLogout()}>
+      <View style={styles.logoutContainer}>
+        <Text style={styles.logoutText}>Logout</Text>
+        <Ionicons name="log-out-outline" size={24} color={theme.colors.error} />
+      </View>
+    </TouchableOpacity>
   );
 };
