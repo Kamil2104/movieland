@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -11,21 +11,23 @@ import LoginScreen from './screens/start/LoginScreen';
 import RegisterScreen from './screens/start/RegisterScreen';
 import BottomTabs from './navigation/BottomTabs';
 
-import { ThemeProvider } from './contexts/ThemeContext';
+import { ThemeProvider, ThemeContext } from './contexts/ThemeContext';
 import { store, RootState } from './store';
 import { loadLastUserFromStorage, setUserFromStorage } from './store/userSlice';
-import { loadAccountSettingsForUser, setSettingsFromStorage, setUserName, resetSettings } from './store/settingsSlice';
+import { loadAccountSettingsForUser, loadLastUserSettingsFromStorage, setSettingsFromStorage, setUserName, resetSettings } from './store/settingsSlice';
 
 import type { RootStackParamList } from './types/navigationTypes';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function AppNavigator() {
-  const dispatch = useDispatch();
-  const [isAppReady, setIsAppReady] = useState(false);
+  const { theme } = useContext(ThemeContext);
 
-  // If user consents (in accountSettingsReducer), then check, otherwise set to false
-  const isLoggedIn = useSelector((state: RootState) => state.user.isLoggedIn);
+  const dispatch = useDispatch();
+
+  const [isAppReady, setIsAppReady] = useState(false);
+  const [lastUserSettings, setLastUserSettings] = useState<{ stayLoggedIn?: string } | null>(null);
+  const userIsLoggedIn = useSelector((state: RootState) => state.user.isLoggedIn);
   const userEmail = useSelector((state: RootState) => state.user.userEmail);
 
   useEffect(() => {
@@ -41,6 +43,9 @@ function AppNavigator() {
         if (accountSettings) {
           dispatch(setSettingsFromStorage(accountSettings));
         }
+
+        const settings = await loadLastUserSettingsFromStorage();
+        setLastUserSettings(settings);
 
         setIsAppReady(true);
       } catch (error) {
@@ -69,11 +74,13 @@ function AppNavigator() {
     if (isLoggedIn && userEmail) {
       loadSettingsForUser();
     }
-  }, [dispatch, isLoggedIn, userEmail]);
+  }, [dispatch, userEmail]);
+
+  const isLoggedIn = userIsLoggedIn && lastUserSettings?.stayLoggedIn === 'Always';
 
   if (!isAppReady) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: theme.colors.background }}>
         <ActivityIndicator size="large" />
       </View>
     );
@@ -99,10 +106,10 @@ export default function App() {
   return (
     <Provider store={store}>
       <SafeAreaProvider>
-      <ThemeProvider>
-        <NavigationContainer>
-          <StatusBar style="auto" />
-          <AppNavigator />
+        <ThemeProvider>
+          <NavigationContainer>
+            <StatusBar style="auto" />
+            <AppNavigator />
           </NavigationContainer>
         </ThemeProvider>
       </SafeAreaProvider>

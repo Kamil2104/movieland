@@ -15,6 +15,7 @@ export const saveAccountSettingsForUser = async (email: string, state: AccountSe
     const allSettings = existingData ? JSON.parse(existingData) : {};
     allSettings[email] = state;
     await AsyncStorage.setItem("accountSettings", JSON.stringify(allSettings));
+    await AsyncStorage.setItem("lastUserSettings", JSON.stringify(state));
   } catch (error) {
     console.error("Failed to save account settings", error);
   }
@@ -29,6 +30,23 @@ export const loadAccountSettingsForUser = async (email: string): Promise<Account
     }
   } catch (error) {
     console.error("Failed to load account settings", error);
+  }
+  return {
+    userName: "",
+    appearance: "System",
+    stayLoggedIn: "Always",
+    defaultHomepage: "Home",
+  };
+};
+
+export const loadLastUserSettingsFromStorage = async (): Promise<AccountSettingsState> => {
+  try {
+    const lastSettings = await AsyncStorage.getItem("lastUserSettings");
+    if (lastSettings) {
+      return JSON.parse(lastSettings);
+    }
+  } catch (error) {
+    console.error("Failed to load last user settings", error);
   }
   return {
     userName: "",
