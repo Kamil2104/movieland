@@ -11,6 +11,8 @@ import AccountStack from "./AccountStack";
 
 import { ThemeContext } from "../contexts/ThemeContext";
 
+import { useAppSelector } from "../store/hooks";
+
 type IoniconName = keyof typeof Ionicons.glyphMap;
 
 const Tab = createBottomTabNavigator();
@@ -18,8 +20,11 @@ const Tab = createBottomTabNavigator();
 export default function BottomTabs() {
   const { theme } = useContext(ThemeContext);
 
+  const { defaultHomepage } = useAppSelector((state) => state.accountSettings);
+
   return (
     <Tab.Navigator
+      initialRouteName={defaultHomepage}
       screenOptions={({ route }) => {
         let iconName: IoniconName = "ellipse";
 
