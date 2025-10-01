@@ -5,6 +5,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 import { ActivityIndicator, View } from 'react-native';
 
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+
 import LoginScreen from './screens/start/LoginScreen';
 import RegisterScreen from './screens/start/RegisterScreen';
 import BottomTabs from './navigation/BottomTabs';
@@ -75,12 +77,14 @@ function AppNavigator() {
 export default function App() {
   return (
     <Provider store={store}>
+      <SafeAreaProvider>
       <ThemeProvider>
         <NavigationContainer>
           <StatusBar style="auto" />
           <AppNavigator />
-        </NavigationContainer>
-      </ThemeProvider>
+          </NavigationContainer>
+        </ThemeProvider>
+      </SafeAreaProvider>
     </Provider>
   );
 }

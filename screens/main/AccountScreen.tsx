@@ -4,7 +4,8 @@ import { StyleSheet, Text, View, TextInput } from 'react-native';
 import { ThemeContext } from '../../contexts/ThemeContext';
 
 import { useAppSelector } from '../../store/hooks';
-import { useAppDispatch } from '../../store/hooks';
+
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Ionicons } from '@expo/vector-icons';
 import DropdownList from '../../components/DropdownList';
@@ -12,6 +13,8 @@ import DropdownList from '../../components/DropdownList';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import { AccountStackParamList } from '../../types/navigationTypes';
+
+import { spacing } from '../../styles/spacing';
 
 type NavigationProp = NativeStackNavigationProp<AccountStackParamList, 'AccountMain'>;
 
@@ -55,8 +58,7 @@ export default function AccountScreen() {
       justifyContent: 'flex-start',
       gap: 20,
       backgroundColor: theme.colors.background,
-      padding: 20,
-      paddingTop: 80,
+      padding: spacing.padding,
     },
     profileCard: {
       width: '100%',
@@ -100,7 +102,7 @@ export default function AccountScreen() {
   });
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Profile styles={styles} />
       <View style={styles.options}>
         <DropdownList
@@ -122,7 +124,7 @@ export default function AccountScreen() {
           onPress={() => handleDefaultHomepageUpdate()}
         />
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
