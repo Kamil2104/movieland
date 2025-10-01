@@ -12,6 +12,7 @@ import BottomTabs from './navigation/BottomTabs';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { store, RootState } from './store';
 import { loadUserFromStorage, setUserFromStorage } from './store/userSlice';
+import { loadAccountSettings, setSettingsFromStorage, setUserName } from './store/settingsSlice';
 
 import type { RootStackParamList } from './types/navigationTypes';
 
@@ -20,16 +21,31 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 function AppNavigator() {
   const dispatch = useDispatch();
   const [isAppReady, setIsAppReady] = useState(false);
+
+  // If user consents (in accountSettingsReducer), then check, otherwise set to false
   const isLoggedIn = useSelector((state: RootState) => state.user.isLoggedIn);
 
   useEffect(() => {
-    const initUser = async () => {
-      const userData = await loadUserFromStorage();
-      dispatch(setUserFromStorage(userData));
-      setIsAppReady(true);
+    const initializeApp = async () => {
+      try {
+        const userData = await loadUserFromStorage();
+        if (userData) {
+          dispatch(setUserFromStorage(userData));
+          dispatch(setUserName(userData.userName || ''));
+        }
+
+        const accountSettings = await loadAccountSettings();
+        if (accountSettings) {
+          dispatch(setSettingsFromStorage(accountSettings));
+        }
+
+        setIsAppReady(true);
+      } catch (error) {
+        console.error('Error initializing app:', error);
+      }
     };
 
-    initUser();
+    initializeApp();
   }, [dispatch]);
 
   if (!isAppReady) {

@@ -6,7 +6,7 @@ import { ThemeContext } from "../contexts/ThemeContext";
 
 type DropdownListProps = {
   title: string,
-  selectedOption: string,
+  selectedOption: string | undefined,
   style: string,
   onPress: () => void
 }

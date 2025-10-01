@@ -1,3 +1,5 @@
+import { OptionType, StateKeyType } from "./settingsTypes";
+
 export type RootStackParamList = {
     Login: undefined;
     Register: undefined;
@@ -6,5 +8,10 @@ export type RootStackParamList = {
 
 export type AccountStackParamList = {
     AccountMain: undefined;
-    OptionsScreen: { title: string, options: string[] };
+    OptionsScreen: {
+        stateKey: StateKeyType,
+        title: string,
+        options: string[],
+        selectedOptionParam: OptionType
+    };
 };

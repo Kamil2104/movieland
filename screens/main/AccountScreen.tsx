@@ -2,7 +2,9 @@ import React, { useContext } from 'react';
 import { StyleSheet, Text, View, TextInput } from 'react-native';
 
 import { ThemeContext } from '../../contexts/ThemeContext';
+
 import { useAppSelector } from '../../store/hooks';
+import { useAppDispatch } from '../../store/hooks';
 
 import { Ionicons } from '@expo/vector-icons';
 import DropdownList from '../../components/DropdownList';
@@ -15,8 +17,36 @@ type NavigationProp = NativeStackNavigationProp<AccountStackParamList, 'AccountM
 
 export default function AccountScreen() {
   const { theme } = useContext(ThemeContext);
+  const { appearance, stayLoggedIn, defaultHomepage } = useAppSelector((state) => state.accountSettings);
 
   const navigation = useNavigation<NavigationProp>();
+
+  const handleAppearanceUpdate = () => {
+    navigation.navigate("OptionsScreen", {
+      stateKey: 'appearance',
+      title: 'Appearance',
+      options: ["System", "Dark", "Light"],
+      selectedOptionParam: appearance,
+    })
+  }
+
+  const handleStayLoggedInUpdate = () => {
+    navigation.navigate("OptionsScreen", {
+      stateKey: 'stayLoggedIn',
+      title: 'Stay logged in',
+      options: ["Always", "Never"],
+      selectedOptionParam: stayLoggedIn,
+    })
+  }
+
+  const handleDefaultHomepageUpdate = () => {
+    navigation.navigate("OptionsScreen", {
+      stateKey: 'defaultHomepage',
+      title: 'Default homepage',
+      options: ["Home", "Discover", "Favourites", "Community"],
+      selectedOptionParam: defaultHomepage,
+    })
+  }
 
   const styles = StyleSheet.create({
     container: {
@@ -75,21 +105,21 @@ export default function AccountScreen() {
       <View style={styles.options}>
         <DropdownList
           title='Appearance'
-          selectedOption='System'
+          selectedOption={appearance}
           style='start'
-          onPress={() => navigation.navigate("OptionsScreen", { title: 'Appearance', options: ["System", "Dark", "Light"] })}
+          onPress={() => handleAppearanceUpdate()}
         />
         <DropdownList
           title='Stay logged in'
-          selectedOption='Always'
+          selectedOption={stayLoggedIn}
           style='center'
-          onPress={() => navigation.navigate("OptionsScreen", { title: 'Stay logged in', options: ["Always", "Never"] })}
+          onPress={() => handleStayLoggedInUpdate()}
         />
         <DropdownList
           title='Default homepage'
-          selectedOption='Home'
+          selectedOption={defaultHomepage}
           style='end'
-          onPress={() => navigation.navigate("OptionsScreen", { title: 'Default homepage', options: ["Home", "Discover", "Favourites", "Community"] })}
+          onPress={() => handleDefaultHomepageUpdate()}
         />
       </View>
     </View>
