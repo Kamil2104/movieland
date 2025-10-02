@@ -34,7 +34,7 @@ function AppNavigator() {
     const initializeApp = async () => {
       try {
         const userData = await loadLastUserFromStorage();
-        if (userData) {
+        if (userData.userEmail !== null) {
           dispatch(setUserFromStorage(userData));
           dispatch(setUserName(userData.userName || ''));
         }
