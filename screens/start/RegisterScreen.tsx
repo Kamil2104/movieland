@@ -1,19 +1,20 @@
-import React, { useState, useContext, useRef } from "react";
+import React, { useState, useRef } from "react";
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator, Keyboard, TouchableWithoutFeedback } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import MaskedView from "@react-native-masked-view/masked-view";
 
-import { ThemeContext } from "../../contexts/ThemeContext";
 
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../../types/navigationTypes";
 
 import { handleRegister } from "../../validation/accountManagement";
 
+import lightTheme from "../../themes/lightTheme";
+
 export default function RegisterScreen() {
-  const { theme } = useContext(ThemeContext);
+  const theme = lightTheme
 
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [email, setEmail] = useState<string>("");

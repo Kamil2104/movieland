@@ -1,10 +1,9 @@
-import React, { useState, useContext, useRef } from "react";
+import React, { useState, useRef } from "react";
 
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator, Keyboard, TouchableWithoutFeedback } from "react-native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 
-import { ThemeContext } from "../../contexts/ThemeContext";
 import { useAppDispatch } from "../../store/hooks";
 
 import type { RootStackParamList } from "../../types/navigationTypes";
@@ -14,8 +13,10 @@ import MaskedView from "@react-native-masked-view/masked-view";
 
 import { handleLogin } from "../../validation/accountManagement";
 
+import lightTheme from "../../themes/lightTheme";
+
 export default function LoginScreen() {
-  const { theme } = useContext(ThemeContext);
+  const theme = lightTheme
   const dispatch = useAppDispatch();
 
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
