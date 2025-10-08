@@ -2,27 +2,36 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export interface UserState {
-  isLoggedIn: boolean;
   userEmail: string | null;
+  password: string | null;
   userName: string | null;
+  isLoggedIn: boolean;
 }
 
 interface StoredUsers {
   [email: string]: UserState;
 }
 
-export const saveUserToStorage = async (userData: { email: string; name: string }) => {
+export const saveUserToStorage = async (userData: { email: string; name: string; password: string }) => {
   try {
     const existingData = await AsyncStorage.getItem("users");
     let users: StoredUsers = existingData ? JSON.parse(existingData) : {};
 
     const userState: UserState = {
-      isLoggedIn: true,
       userEmail: userData.email,
+      password: userData.password,
       userName: userData.name,
+      isLoggedIn: true,
     };
 
     users[userData.email] = userState;
+
+    const allKeys = await AsyncStorage.getAllKeys();
+    for (const key of allKeys) {
+      if (key !== "users" && key !== "lastUser") {
+        await AsyncStorage.removeItem(key);
+      }
+    }
 
     await AsyncStorage.setItem("users", JSON.stringify(users));
     await AsyncStorage.setItem("lastUser", JSON.stringify(userState));
@@ -64,48 +73,92 @@ export const logoutUserInStorage = async (email: string) => {
 export const loadLastUserFromStorage = async (): Promise<UserState> => {
   try {
     const lastUserString = await AsyncStorage.getItem("lastUser");
-    if (!lastUserString) return { isLoggedIn: false, userEmail: null, userName: null };
+    if (!lastUserString) return { userEmail: null, password: null, userName: null, isLoggedIn: false, };
 
     const lastUser: UserState = JSON.parse(lastUserString);
     return lastUser;
   } catch (error) {
     console.error("Error loading last user:", error);
-    return { isLoggedIn: false, userEmail: null, userName: null };
+    return { userEmail: null, password: null, userName: null, isLoggedIn: false };
+  }
+};
+
+const deleteAccountFromStorage = async (email: string | null) => {
+  if (!email) return;
+
+  try {
+    const existingData = await AsyncStorage.getItem("users");
+    if (!existingData) return;
+
+    let users: StoredUsers = JSON.parse(existingData);
+
+    delete users[email];
+
+    if (Object.keys(users).length === 0) {
+      await AsyncStorage.removeItem("users");
+    } else {
+      await AsyncStorage.setItem("users", JSON.stringify(users));
+    }
+
+    const lastUserString = await AsyncStorage.getItem("lastUser");
+    if (lastUserString) {
+      const lastUser: UserState = JSON.parse(lastUserString);
+      if (lastUser.userEmail === email) {
+        await AsyncStorage.removeItem("lastUser");
+      }
+    }
+
+    console.log(`User ${email} has been permanently deleted from storage.`);
+  } catch (error) {
+    console.error("Error deleting account from storage:", error);
   }
 };
 
 const initialState: UserState = {
-  isLoggedIn: false,
   userEmail: null,
+  password: null,
   userName: null,
+  isLoggedIn: false,
 };
 
 const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    login: (state, action: PayloadAction<{ email: string; name: string }>) => {
-      state.isLoggedIn = true;
+    login: (state, action: PayloadAction<{ email: string; name: string; password: string }>) => {
       state.userEmail = action.payload.email;
+      state.password = action.payload.password;
       state.userName = action.payload.name;
+      state.isLoggedIn = true;
 
       saveUserToStorage(action.payload);
     },
     logout: (state) => {
       logoutUserInStorage(state.userEmail || '');
 
-      state.isLoggedIn = false;
       state.userEmail = null;
+      state.password = null;
       state.userName = null;
-
+      state.isLoggedIn = false;
     },
     setUserFromStorage: (state, action: PayloadAction<UserState>) => {
-      state.isLoggedIn = action.payload.isLoggedIn;
       state.userEmail = action.payload.userEmail;
+      state.password = action.payload.password;
       state.userName = action.payload.userName;
+      state.isLoggedIn = action.payload.isLoggedIn;
+    },
+    deleteAccount: (state) => {
+      if (state.userEmail) {
+        deleteAccountFromStorage(state.userEmail);
+      }
+
+      state.userEmail = null;
+      state.password = null;
+      state.userName = null;
+      state.isLoggedIn = false;
     },
   },
 });
 
-export const { login, logout, setUserFromStorage } = userSlice.actions;
+export const { login, logout, setUserFromStorage, deleteAccount } = userSlice.actions;
 export default userSlice.reducer;

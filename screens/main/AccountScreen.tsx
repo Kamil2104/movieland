@@ -14,7 +14,8 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import { AccountStackParamList, RootStackParamList } from '../../types/navigationTypes';
 
-import { logout } from '../../store/userSlice';
+import { deleteAccount, logout } from '../../store/userSlice';
+import { deleteAccountSettings } from '../../store/settingsSlice';
 
 import { spacing } from '../../styles/spacing';
 
@@ -121,6 +122,18 @@ export default function AccountScreen() {
       fontSize: 16,
       fontWeight: '500',
       color: theme.colors.error,
+    },
+    deleteAccountButton: {
+      width: '100%',
+      backgroundColor: theme.colors.cardBackground,
+      borderRadius: 20,
+      paddingVertical: 15,
+      paddingHorizontal: spacing.padding,
+    },
+    deleteAccountText: {
+      fontSize: 16,
+      fontWeight: '500',
+      color: theme.colors.error,
     }
   });
 
@@ -148,6 +161,7 @@ export default function AccountScreen() {
         />
       </View>
       <Logout styles={styles} />
+      <DeleteAccount styles={styles} />
     </SafeAreaView>
   );
 }
@@ -212,6 +226,40 @@ const Logout = (props: { styles: any }) => {
         <Text style={styles.logoutText}>Logout</Text>
         <Ionicons name="log-out-outline" size={24} color={theme.colors.error} />
       </View>
+    </TouchableOpacity>
+  );
+};
+
+const DeleteAccount = (props: { styles: any }) => {
+  const { styles } = props;
+
+  const dispatch = useAppDispatch();
+  const navigationLogin = useNavigation<NavigationPropLogin>();
+
+  const handleDeleteAccountAction = () => {
+    dispatch(deleteAccount());
+    // TODO: Delete account settings permanently from storage (AsyncStorage)
+    navigationLogin.replace("Login");
+  };
+
+  const handleDeleteAccount = () => {
+    Alert.alert(
+      "Confirm Delete Account",
+      "Do you really want to delete your account?",
+      [
+        { text: "Cancel", style: "cancel" },
+        { text: "Delete Account", style: "destructive", onPress: () => handleDeleteAccountAction() },
+      ],
+      { cancelable: true }
+    );
+  };
+
+  return (
+    <TouchableOpacity
+      style={styles.deleteAccountButton}
+      onPress={handleDeleteAccount}
+    >
+      <Text style={styles.deleteAccountText}>Delete Account</Text>
     </TouchableOpacity>
   );
 };

@@ -18,6 +18,8 @@ import { loadAccountSettingsForUser, loadLastUserSettingsFromStorage, setSetting
 
 import type { RootStackParamList } from './types/navigationTypes';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function AppNavigator() {
@@ -29,6 +31,22 @@ function AppNavigator() {
   const [lastUserSettings, setLastUserSettings] = useState<{ stayLoggedIn?: string } | null>(null);
   const userIsLoggedIn = useSelector((state: RootState) => state.user.isLoggedIn);
   const userEmail = useSelector((state: RootState) => state.user.userEmail);
+
+  // useEffect for deleting all data from storage
+  // useEffect(() => {
+  //   const loadUsersSettingsData = async () => {
+  //     await AsyncStorage.removeItem("accountSettings");
+  //     console.log("accountSettings deleted");
+  //   };
+
+  //   const loadUsersData = async () => {
+  //     await AsyncStorage.removeItem("users");
+  //     console.log("users deleted");
+  //   };
+
+  //   loadUsersData();
+  //   loadUsersSettingsData();
+  // }, [userEmail]);
 
   useEffect(() => {
     const initializeApp = async () => {
