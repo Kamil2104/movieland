@@ -87,6 +87,11 @@ app.post('/register', async (req, res) => {
       [email, name, password]
     );
 
+    await db.run(
+      'INSERT INTO settings (email) VALUES (?)',
+      [email]
+    )
+
     res.status(200).json({ message: 'Success' });
   } catch (err) {
     console.error('Error registering:', err);

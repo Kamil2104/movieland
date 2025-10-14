@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert } from 'react-native';
 
 import { ThemeContext } from '../../contexts/ThemeContext';
@@ -168,10 +168,6 @@ export default function AccountScreen() {
 const Profile = (props: { styles: any }) => {
   const { styles } = props;
   const { userEmail, userName } = useAppSelector((state) => state.user);
-
-  useEffect(() => {
-    console.log(userEmail)
-  }, [userEmail])
 
   const { theme } = useContext(ThemeContext);
 
