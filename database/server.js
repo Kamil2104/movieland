@@ -1,0 +1,95 @@
+import express from 'express';
+import cors from 'cors';
+import sqlite3 from 'sqlite3';
+
+import path from "path";
+import { fileURLToPath } from "url";
+
+import { open } from 'sqlite';
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+const PORT = 3000;
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
+});
+
+// Database connection
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const dbPath = path.resolve(__dirname, "movieland.db");
+
+let db;
+const initDb = async () => {
+  db = await open({
+    filename: dbPath,
+    driver: sqlite3.Database
+  });
+  console.log('✅ Connected to movieland.db');
+
+  // If table doesn't exist, create it
+  await db.exec(`
+    CREATE TABLE IF NOT EXISTS users (
+      email TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      password TEXT NOT NULL
+    );
+  `);
+};
+
+initDb()
+
+// Login endpoint
+app.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await db.get(
+      'SELECT * FROM users WHERE email = ?',
+      [email]
+    );
+
+    if (!user) { // If user not found
+      return res.status(404).json({ message: 'Invalid e-mail or password' });
+    }
+
+    if (user.password !== password) { // If password does not match
+      return res.status(401).json({ message: 'Invalid e-mail or password' });
+    }
+
+    res.status(200).json({ message: 'Success' });
+
+  } catch (err) {
+    console.error('Error logging in:', err);
+    res.status(500).json({ message: null, error: 'Server error' });
+  }
+});
+
+// Register endpoint
+app.post('/register', async (req, res) => {
+  const { email, name, password } = req.body;
+
+  try {
+    const existingUser = await db.get(
+      'SELECT * FROM users WHERE email = ?',
+      [email]
+    );
+
+    if (existingUser) {
+      return res.status(400).json({ message: 'User already exists' });
+    }
+
+    await db.run(
+      'INSERT INTO users (email, name, password) VALUES (?, ?, ?)',
+      [email, name, password]
+    );
+
+    res.status(200).json({ message: 'Success' });
+  } catch (err) {
+    console.error('Error registering:', err);
+    res.status(500).json({ message: null, error: 'Server error' });
+  }
+});
