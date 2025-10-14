@@ -1,6 +1,7 @@
 import { Alert } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { login as loginAction } from "../store/userSlice";
+
+import { login  } from "../store/userSlice";
+
 import { loginProps, registerProps } from "../types/accountManagementTypes";
 
 import axios from "axios";
@@ -11,6 +12,7 @@ async function handleLogin(props: loginProps) {
   const { email, password, setEmailError, setPasswordError, setIsSubmitting, navigation, dispatch } = props;
 
   const trimmedEmail = email.trim();
+  const userName = trimmedEmail.split("@")[0];
   const trimmedPassword = password.trim();
 
   if (!trimmedEmail) {
@@ -34,11 +36,12 @@ async function handleLogin(props: loginProps) {
   try {
     const res = await axios.post(`${API_URL}/login`, {
       email: trimmedEmail,
-      password: password,
+      password: trimmedPassword,
     });
 
     if (res.data.message === "Success") {
       navigation.navigate("Main")
+      dispatch(login({ email, userName, password }))
     } else {
       setEmailError(res.data.message || "Unexpected error");
     }

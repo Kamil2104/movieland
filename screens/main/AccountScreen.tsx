@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert } from 'react-native';
 
 import { ThemeContext } from '../../contexts/ThemeContext';
@@ -14,8 +14,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import { AccountStackParamList, RootStackParamList } from '../../types/navigationTypes';
 
-import { deleteAccount, logout } from '../../store/userSlice';
-import { deleteAccountSettings } from '../../store/settingsSlice';
+import { logout } from '../../store/userSlice';
 
 import { spacing } from '../../styles/spacing';
 
@@ -170,6 +169,10 @@ const Profile = (props: { styles: any }) => {
   const { styles } = props;
   const { userEmail, userName } = useAppSelector((state) => state.user);
 
+  useEffect(() => {
+    console.log(userEmail)
+  }, [userEmail])
+
   const { theme } = useContext(ThemeContext);
 
   return (
@@ -233,12 +236,9 @@ const Logout = (props: { styles: any }) => {
 const DeleteAccount = (props: { styles: any }) => {
   const { styles } = props;
 
-  const dispatch = useAppDispatch();
   const navigationLogin = useNavigation<NavigationPropLogin>();
 
   const handleDeleteAccountAction = () => {
-    dispatch(deleteAccount());
-    // TODO: Delete account settings permanently from storage (AsyncStorage)
     navigationLogin.replace("Login");
   };
 

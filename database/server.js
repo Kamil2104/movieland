@@ -93,3 +93,9 @@ app.post('/register', async (req, res) => {
     res.status(500).json({ message: null, error: 'Server error' });
   }
 });
+
+// Delete account endpoint
+
+// Appearance change endpoint
+// StayLoggedIn change endpoint
+// DefaultHomepage change endpoint
