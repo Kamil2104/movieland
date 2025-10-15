@@ -18,6 +18,8 @@ import { logout } from '../../store/userSlice';
 
 import { spacing } from '../../styles/spacing';
 
+import { API_URL } from '@env';
+
 import axios from 'axios';
 
 type NavigationProp = NativeStackNavigationProp<AccountStackParamList, 'AccountMain'>;
@@ -237,8 +239,6 @@ const DeleteAccount = (props: { styles: any }) => {
   const { userEmail } = useAppSelector((state) => state.user);
 
   const navigationLogin = useNavigation<NavigationPropLogin>();
-
-  const API_URL = "https://spectral-unacclimatized-abe.ngrok-free.dev/settings"
 
   const handleDeleteAccountAction = async () => {
     try {

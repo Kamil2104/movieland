@@ -6,7 +6,7 @@ import { loginProps, registerProps } from "../types/accountManagementTypes";
 
 import axios from "axios";
 
-const API_URL = "https://spectral-unacclimatized-abe.ngrok-free.dev/auth"
+import { API_URL } from "@env";
 
 async function handleLogin(props: loginProps) {
   const { email, password, setEmailError, setPasswordError, setIsSubmitting, navigation, dispatch } = props;
@@ -34,7 +34,7 @@ async function handleLogin(props: loginProps) {
   setIsSubmitting(true);
 
   try {
-    const res = await axios.post(`${API_URL}/login`, {
+    const res = await axios.post(`${API_URL}/auth/login`, {
       email: trimmedEmail,
       password: trimmedPassword,
     });
@@ -102,7 +102,7 @@ async function handleRegister(props: registerProps) {
   try {
     const userName = trimmedEmail.split("@")[0];
 
-    const res = await axios.post(`${API_URL}/register`, {
+    const res = await axios.post(`${API_URL}/auth/register`, {
       email: trimmedEmail,
       name: userName,
       password: password,

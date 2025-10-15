@@ -18,6 +18,8 @@ import { store } from './store';
 
 import type { RootStackParamList } from './types/navigationTypes';
 
+import { API_URL } from '@env';
+
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function AppNavigator() {
@@ -28,7 +30,7 @@ function AppNavigator() {
     if (isLoggedIn === true) {
       const fetchSettings = async () => {
         try {
-          const res = await axios.post('https://spectral-unacclimatized-abe.ngrok-free.dev/settings/getSettings', {
+          const res = await axios.post(`${API_URL}/settings/getSettings`, {
             email: userEmail,
           });
 
