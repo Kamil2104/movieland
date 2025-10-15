@@ -58,9 +58,9 @@ function AppNavigator() {
         animationDuration: 300,
       }}
     >
-      <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="Register" component={RegisterScreen} />
-      <Stack.Screen name="Main" component={BottomTabs} />
+      <Stack.Screen name="Login" component={LoginScreen} options={{ gestureEnabled: false }} />
+      <Stack.Screen name="Register" component={RegisterScreen} options={{ gestureEnabled: false }} />
+      <Stack.Screen name="Main" component={BottomTabs} options={{ gestureEnabled: false }} />
     </Stack.Navigator>
   );
 }
