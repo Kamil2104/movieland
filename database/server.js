@@ -109,6 +109,7 @@ app.post('/register', async (req, res) => {
   }
 });
 
+// Get user settings endpoint
 app.post('/getSettings', async (req, res) => {
   const { email } = req.body
 
@@ -136,7 +137,49 @@ app.post('/getSettings', async (req, res) => {
   }
 })
 
-// Delete account endpoint
 // Appearance change endpoint
+app.post('/updateAppearance', async (req, res) => {
+  const { value, email } = req.body
+
+  try {
+    await db.run('UPDATE settings SET appearance = ? WHERE email = ?',
+      [value, email]
+    )
+
+    res.status(200).json({ message: "Success" })
+  } catch (err) {
+    res.status(500).json({ message: 'Error updating data' })
+  }
+})
+
 // StayLoggedIn change endpoint
+app.post('/updateStayLoggedIn', async (req, res) => {
+  const { value, email } = req.body
+
+  try {
+    await db.run('UPDATE settings SET stayLoggedIn = ? WHERE email = ?',
+      [value, email]
+    )
+
+    res.status(200).json({ message: "Success" })
+  } catch (err) {
+    res.status(500).json({ message: 'Error updating data' })
+  }
+})
+
 // DefaultHomepage change endpoint
+app.post('/updateDefaultHomepage', async (req, res) => {
+  const { value, email } = req.body
+
+  try {
+    await db.run('UPDATE settings SET defaultHomepage = ? WHERE email = ?',
+      [value, email]
+    )
+
+    res.status(200).json({ message: "Success" })
+  } catch (err) {
+    res.status(500).json({ message: 'Error updating data' })
+  }
+})
+
+// Delete account endpoint

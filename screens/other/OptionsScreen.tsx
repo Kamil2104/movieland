@@ -3,18 +3,18 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { ThemeContext } from "../../contexts/ThemeContext";
 
 import { useRoute, useNavigation } from "@react-navigation/native";
-import { useAppDispatch, useAppSelector } from "../../store/hooks";
-
-import { updateAppearance, updateStayLoggedIn, updateDefaultHomepage } from "../../store/settingsSlice";
+import { useAppSelector } from "../../store/hooks";
 
 import { Ionicons } from "@expo/vector-icons";
 
+import useAccountSettings from "../../hooks/useAccountSettings";
+
 export default function OptionsScreen() {
   const { theme } = useContext(ThemeContext);
+  const { updateSetting } = useAccountSettings()
 
   const route = useRoute();
   const navigation = useNavigation();
-  const dispatch = useAppDispatch();
 
   const { stateKey, options, title, selectedOptionParam } = route.params as {
     stateKey: 'appearance' | 'stayLoggedIn' | 'defaultHomepage'
@@ -22,24 +22,12 @@ export default function OptionsScreen() {
     options: string[];
     selectedOptionParam: string
   };
-  const userEmail = useAppSelector((state) => state.user.userEmail || '');
 
   const [selectedOption, setSelectedOption] = useState<string>(selectedOptionParam)
 
   const onPress = (opt: any) => {
     setSelectedOption(opt)
-
-    switch(stateKey) {
-      case "appearance":
-        dispatch(updateAppearance(userEmail, opt));
-        break;
-      case "stayLoggedIn":
-        dispatch(updateStayLoggedIn(userEmail, opt));
-        break;
-      case "defaultHomepage":
-        dispatch(updateDefaultHomepage(userEmail, opt));
-        break;
-    }
+    updateSetting(stateKey, opt)
   }
 
   const styles = StyleSheet.create({
