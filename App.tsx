@@ -28,7 +28,7 @@ function AppNavigator() {
     if (isLoggedIn === true) {
       const fetchSettings = async () => {
         try {
-          const res = await axios.post('https://spectral-unacclimatized-abe.ngrok-free.dev/getSettings', {
+          const res = await axios.post('https://spectral-unacclimatized-abe.ngrok-free.dev/settings/getSettings', {
             email: userEmail,
           });
 

@@ -8,7 +8,7 @@ const useAccountSettings = () => {
   const dispatch = useAppDispatch()
   const { userEmail } = useAppSelector((state) => state.user)
 
-  const API_URL = "https://spectral-unacclimatized-abe.ngrok-free.dev"
+  const API_URL = "https://spectral-unacclimatized-abe.ngrok-free.dev/settings"
 
   const updateAppearance = async (val: 'Light' | 'Dark') => {
     try {

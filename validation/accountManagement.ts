@@ -6,7 +6,7 @@ import { loginProps, registerProps } from "../types/accountManagementTypes";
 
 import axios from "axios";
 
-const API_URL = "https://spectral-unacclimatized-abe.ngrok-free.dev"
+const API_URL = "https://spectral-unacclimatized-abe.ngrok-free.dev/auth"
 
 async function handleLogin(props: loginProps) {
   const { email, password, setEmailError, setPasswordError, setIsSubmitting, navigation, dispatch } = props;

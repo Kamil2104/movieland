@@ -238,7 +238,7 @@ const DeleteAccount = (props: { styles: any }) => {
 
   const navigationLogin = useNavigation<NavigationPropLogin>();
 
-  const API_URL = "https://spectral-unacclimatized-abe.ngrok-free.dev"
+  const API_URL = "https://spectral-unacclimatized-abe.ngrok-free.dev/settings"
 
   const handleDeleteAccountAction = async () => {
     try {
