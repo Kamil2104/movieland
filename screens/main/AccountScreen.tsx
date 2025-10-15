@@ -23,6 +23,7 @@ type NavigationPropLogin = NativeStackNavigationProp<RootStackParamList, 'Login'
 
 export default function AccountScreen() {
   const { theme } = useContext(ThemeContext);
+
   const { appearance, stayLoggedIn, defaultHomepage } = useAppSelector((state) => state.accountSettings);
 
   const navigation = useNavigation<NavigationProp>();

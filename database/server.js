@@ -30,12 +30,22 @@ const initDb = async () => {
   });
   console.log('✅ Connected to movieland.db');
 
-  // If table doesn't exist, create it
+  // If tables don't exist, create them
   await db.exec(`
     CREATE TABLE IF NOT EXISTS users (
       email TEXT PRIMARY KEY,
       name TEXT NOT NULL,
       password TEXT NOT NULL
+    );
+  `);
+
+  await db.exec(`
+    CREATE TABLE IF NOT EXISTS settings (
+      email TEXT PRIMARY KEY,
+      appearance TEXT DEFAULT 'light',
+      stayLoggedIn TEXT DEFAULT 'Always',
+      defaultHomepage TEXT DEFAULT 'Home',
+      FOREIGN KEY (email) REFERENCES users(email)
     );
   `);
 };
@@ -88,8 +98,8 @@ app.post('/register', async (req, res) => {
     );
 
     await db.run(
-      'INSERT INTO settings (email) VALUES (?)',
-      [email]
+      'INSERT INTO settings (email, name) VALUES (?, ?)',
+      [email, name]
     )
 
     res.status(200).json({ message: 'Success' });
@@ -99,8 +109,34 @@ app.post('/register', async (req, res) => {
   }
 });
 
-// Delete account endpoint
+app.post('/getSettings', async (req, res) => {
+  const { email } = req.body
 
+  try {
+    const settings = await db.get(
+      'SELECT appearance, stayLoggedIn, defaultHomepage FROM settings WHERE email = ?',
+      [email]
+    )
+
+    if (!settings) {
+      return res.status(404).json({ message: 'Error uploading settings' });
+    }
+
+    res.status(200).json({
+      message: 'Success',
+      settings: {
+        appearance: settings.appearance,
+        stayLoggedIn: settings.stayLoggedIn,
+        defaultHomepage: settings.defaultHomepage
+      }
+    });
+  } catch (err) {
+    console.error('Error uploading settings:', err);
+    res.status(500).json({ message: null, error: 'Server error' });
+  }
+})
+
+// Delete account endpoint
 // Appearance change endpoint
 // StayLoggedIn change endpoint
 // DefaultHomepage change endpoint

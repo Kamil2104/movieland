@@ -1,98 +1,12 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import type { RootState, AppDispatch } from './index';
-
-//! Make sure it is possible to store settings for multiple users. It's not possible now.
-//! Structure should be similar to users structure - userEmail: { settings }.
-//! Change existing code to support this.
 
 export interface AccountSettingsState {
-  userName: string | null;
   appearance: "System" | "Dark" | "Light" | undefined;
   stayLoggedIn: "Always" | "Never" | undefined;
   defaultHomepage: "Home" | "Discover" | "Favourites" | "Community" | undefined;
 }
 
-export const saveAccountSettingsForUser = async (email: string, state: AccountSettingsState) => {
-  try {
-    const existingData = await AsyncStorage.getItem("accountSettings");
-    const allSettings = existingData ? JSON.parse(existingData) : {};
-    allSettings[email] = state;
-    await AsyncStorage.setItem("accountSettings", JSON.stringify(allSettings));
-    await AsyncStorage.setItem("lastUserSettings", JSON.stringify(state));
-  } catch (error) {
-    console.error("Failed to save account settings", error);
-  }
-};
-
-export const loadAccountSettingsForUser = async (email: string): Promise<AccountSettingsState> => {
-  try {
-    const existingData = await AsyncStorage.getItem("accountSettings");
-    if (existingData) {
-      const allSettings = JSON.parse(existingData);
-      if (allSettings[email]) return allSettings[email];
-    }
-  } catch (error) {
-    console.error("Failed to load account settings", error);
-  }
-  return {
-    userName: "",
-    appearance: "System",
-    stayLoggedIn: "Always",
-    defaultHomepage: "Home",
-  };
-};
-
-
-export const loadLastUserSettingsFromStorage = async (): Promise<AccountSettingsState> => {
-  try {
-    const lastSettings = await AsyncStorage.getItem("lastUserSettings");
-    if (lastSettings) {
-      return JSON.parse(lastSettings);
-    }
-  } catch (error) {
-    console.error("Failed to load last user settings", error);
-  }
-  return {
-    userName: "",
-    appearance: "System",
-    stayLoggedIn: "Always",
-    defaultHomepage: "Home",
-  };
-};
-
-const deleteAccountSettingsForUser = async (email: string | null) => {
-  if (!email) return;
-  try {
-    const existingData = await AsyncStorage.getItem("accountSettings");
-    if (!existingData) return;
-
-    let allSettings = JSON.parse(existingData);
-
-    delete allSettings[email];
-
-    if (Object.keys(allSettings).length === 0) {
-      await AsyncStorage.removeItem("accountSettings");
-    } else {
-      await AsyncStorage.setItem("accountSettings", JSON.stringify(allSettings));
-    }
-
-    const lastSettings = await AsyncStorage.getItem("lastUserSettings");
-    if (lastSettings) {
-      const parsedLastSettings = JSON.parse(lastSettings);
-      if (parsedLastSettings.userEmail === email) {
-        await AsyncStorage.removeItem("lastUserSettings");
-      }
-    }
-
-    console.log(`Account settings for ${email} deleted successfully.`);
-  } catch (error) {
-    console.error("Failed to delete account settings:", error);
-  }
-};
-
 const initialState: AccountSettingsState = {
-  userName: "",
   appearance: "System",
   stayLoggedIn: "Always",
   defaultHomepage: "Home",
@@ -102,9 +16,6 @@ const accountSettingsSlice = createSlice({
   name: "accountSettings",
   initialState,
   reducers: {
-    setUserName: (state, action: PayloadAction<string>) => {
-      state.userName = action.payload;
-    },
     setAppearance: (state, action: PayloadAction<AccountSettingsState["appearance"]>) => {
       state.appearance = action.payload;
     },
@@ -114,53 +25,14 @@ const accountSettingsSlice = createSlice({
     setDefaultHomepage: (state, action: PayloadAction<AccountSettingsState["defaultHomepage"]>) => {
       state.defaultHomepage = action.payload;
     },
-    setSettingsFromStorage: (state, action: PayloadAction<AccountSettingsState>) => {
-      state.userName = action.payload.userName;
-      state.appearance = action.payload.appearance;
-      state.stayLoggedIn = action.payload.stayLoggedIn;
-      state.defaultHomepage = action.payload.defaultHomepage;
-    },
-    resetSettings: (state) => {
-      state.userName = "";
-      state.appearance = "System";
-      state.stayLoggedIn = "Always";
-      state.defaultHomepage = "Home";
-    },
-    deleteAccountSettings: (state, action: PayloadAction<string | null>) => {
-      state.userName = "";
-      state.appearance = "System";
-      state.stayLoggedIn = "Always";
-      state.defaultHomepage = "Home";
-
-      deleteAccountSettingsForUser(action.payload);
+    setAccountSettings: (state, action: PayloadAction<AccountSettingsState>) => {
+      state.appearance = action.payload.appearance
+      state.stayLoggedIn = action.payload.stayLoggedIn
+      state.defaultHomepage = action.payload.defaultHomepage
     }
   },
 });
 
-// Thunks for auto-save
-export const updateUserName = (email: string, name: string) => async (dispatch: AppDispatch, getState: () => RootState) => {
-  dispatch(setUserName(name));
-  const state = getState().accountSettings;
-  await saveAccountSettingsForUser(email, state);
-};
 
-export const updateAppearance = (email: string, appearance: AccountSettingsState["appearance"]) => async (dispatch: AppDispatch, getState: () => RootState) => {
-  dispatch(setAppearance(appearance));
-  const state = getState().accountSettings;
-  await saveAccountSettingsForUser(email, state);
-};
-
-export const updateStayLoggedIn = (email: string, stayLoggedIn: AccountSettingsState["stayLoggedIn"]) => async (dispatch: AppDispatch, getState: () => RootState) => {
-  dispatch(setStayLoggedIn(stayLoggedIn));
-  const state = getState().accountSettings;
-  await saveAccountSettingsForUser(email, state);
-};
-
-export const updateDefaultHomepage = (email: string, homepage: AccountSettingsState["defaultHomepage"]) => async (dispatch: AppDispatch, getState: () => RootState) => {
-  dispatch(setDefaultHomepage(homepage));
-  const state = getState().accountSettings;
-  await saveAccountSettingsForUser(email, state);
-};
-
-export const { setAppearance, setStayLoggedIn, setDefaultHomepage, setUserName, setSettingsFromStorage, resetSettings, deleteAccountSettings } = accountSettingsSlice.actions;
+export const { setAppearance, setStayLoggedIn, setDefaultHomepage, setAccountSettings } = accountSettingsSlice.actions;
 export default accountSettingsSlice.reducer;

@@ -4,12 +4,14 @@ export interface UserState {
   userEmail: string | null;
   userName: string | null;
   password: string | null;
+  isLoggedIn: boolean
 }
 
 const initialState: UserState = {
   userEmail: null,
   userName: null,
   password: null,
+  isLoggedIn: false
 };
 
 const userSlice = createSlice({
@@ -20,11 +22,13 @@ const userSlice = createSlice({
       state.userEmail = action.payload.email;
       state.userName = action.payload.userName;
       state.password = action.payload.password;
+      state.isLoggedIn = true;
     },
     logout: (state) => {
       state.userEmail = null;
       state.userName = null;
       state.password = null;
+      state.isLoggedIn = false
     },
   },
 });

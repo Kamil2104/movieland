@@ -1,9 +1,11 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Provider, useDispatch, useSelector } from 'react-redux';
-import { ActivityIndicator, View } from 'react-native';
+import { Provider } from 'react-redux';
+import { useAppSelector, useAppDispatch } from './store/hooks';
+import axios from 'axios';
+import { setAccountSettings } from './store/settingsSlice';
 
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -19,6 +21,34 @@ import type { RootStackParamList } from './types/navigationTypes';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function AppNavigator() {
+  const { userEmail, isLoggedIn } = useAppSelector((state) => state.user)
+  const dispatch = useAppDispatch()
+
+  useEffect(() => {
+    if (isLoggedIn === true) {
+      const fetchSettings = async () => {
+        try {
+          const res = await axios.post('https://spectral-unacclimatized-abe.ngrok-free.dev/getSettings', {
+            email: userEmail,
+          });
+
+          if (res.data.settings) {
+            const settings = res.data.settings;
+            dispatch(setAccountSettings({
+              appearance: settings.appearance,
+              stayLoggedIn: settings.stayLoggedIn,
+              defaultHomepage: settings.defaultHomepage,
+            }));
+          }
+        } catch (err) {
+          console.error("Error fetching settings:", err);
+        }
+      };
+
+      fetchSettings();
+    }
+  }, [userEmail, isLoggedIn]);
+
   return (
     <Stack.Navigator
       initialRouteName={"Login"}
