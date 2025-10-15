@@ -109,10 +109,15 @@ export default function AccountScreen() {
     },
     logoutButton: {
       width: '100%',
+      justifyContent: 'center',
+      alignItems: 'center',
       backgroundColor: theme.colors.cardBackground,
-      borderRadius: 20,
-      paddingVertical: 15,
+      borderTopLeftRadius: 20,
+      borderTopRightRadius: 20,
       paddingHorizontal: spacing.padding,
+      paddingVertical: 15,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.divider,
     },
     logoutContainer: {
       width: '100%',
@@ -120,17 +125,20 @@ export default function AccountScreen() {
       justifyContent: 'space-between',
       alignItems: 'center',
       backgroundColor: theme.colors.cardBackground,
-      borderRadius: 20,
     },
     logoutText: {
       fontSize: 16,
       fontWeight: '500',
-      color: theme.colors.error,
+      color: theme.colors.text,
     },
     deleteAccountButton: {
       width: '100%',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
       backgroundColor: theme.colors.cardBackground,
-      borderRadius: 20,
+      borderBottomLeftRadius: 20,
+      borderBottomRightRadius: 20,
       paddingVertical: 15,
       paddingHorizontal: spacing.padding,
     },
@@ -164,8 +172,10 @@ export default function AccountScreen() {
           onPress={() => handleDefaultHomepageUpdate()}
         />
       </View>
-      <Logout styles={styles} />
-      <DeleteAccount styles={styles} />
+      <View style={styles.options}>
+        <Logout styles={styles} />
+        <DeleteAccount styles={styles} />
+      </View>
     </SafeAreaView>
   );
 }
@@ -228,7 +238,7 @@ const Logout = (props: { styles: any }) => {
     <TouchableOpacity style={styles.logoutButton} onPress={() => handleLogout()}>
       <View style={styles.logoutContainer}>
         <Text style={styles.logoutText}>Logout</Text>
-        <Ionicons name="log-out-outline" size={24} color={theme.colors.error} />
+        <Ionicons name="log-out-outline" size={24} color={theme.colors.text} />
       </View>
     </TouchableOpacity>
   );
@@ -236,6 +246,8 @@ const Logout = (props: { styles: any }) => {
 
 const DeleteAccount = (props: { styles: any }) => {
   const { styles } = props;
+  const { theme } = useContext(ThemeContext);
+
   const { userEmail } = useAppSelector((state) => state.user);
 
   const navigationLogin = useNavigation<NavigationPropLogin>();
@@ -267,6 +279,7 @@ const DeleteAccount = (props: { styles: any }) => {
       onPress={handleDeleteAccount}
     >
       <Text style={styles.deleteAccountText}>Delete Account</Text>
+      <Ionicons name="trash-outline" size={24} color={theme.colors.error} />
     </TouchableOpacity>
   );
 };
