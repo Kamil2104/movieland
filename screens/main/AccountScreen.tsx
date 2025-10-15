@@ -18,6 +18,8 @@ import { logout } from '../../store/userSlice';
 
 import { spacing } from '../../styles/spacing';
 
+import axios from 'axios';
+
 type NavigationProp = NativeStackNavigationProp<AccountStackParamList, 'AccountMain'>;
 type NavigationPropLogin = NativeStackNavigationProp<RootStackParamList, 'Login'>;
 
@@ -232,11 +234,19 @@ const Logout = (props: { styles: any }) => {
 
 const DeleteAccount = (props: { styles: any }) => {
   const { styles } = props;
+  const { userEmail } = useAppSelector((state) => state.user);
 
   const navigationLogin = useNavigation<NavigationPropLogin>();
 
-  const handleDeleteAccountAction = () => {
-    navigationLogin.replace("Login");
+  const API_URL = "https://spectral-unacclimatized-abe.ngrok-free.dev"
+
+  const handleDeleteAccountAction = async () => {
+    try {
+      navigationLogin.replace("Login");
+      await axios.post(`${API_URL}/deleteAccount`, { email: userEmail })
+    } catch (err: any) {
+      console.log('Error deleting account: ', err.message)
+    }
   };
 
   const handleDeleteAccount = () => {

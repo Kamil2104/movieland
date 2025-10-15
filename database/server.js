@@ -183,3 +183,18 @@ app.post('/updateDefaultHomepage', async (req, res) => {
 })
 
 // Delete account endpoint
+app.post('/deleteAccount', async (req, res) => {
+  const { email } = req.body
+
+  try {
+    await db.run('DELETE FROM settings WHERE email = ?',
+      [email]
+    );
+
+    await db.run('DELETE FROM users WHERE email = ?',
+      [email]
+    );
+  } catch (err) {
+    res.status(500).json({ message: "Error deleting account" })
+  }
+})
