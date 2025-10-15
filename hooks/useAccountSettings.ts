@@ -12,8 +12,8 @@ const useAccountSettings = () => {
 
   const updateAppearance = async (val: 'Light' | 'Dark') => {
     try {
-      await axios.post(`${API_URL}/settings/updateAppearance`, { value: val, email: userEmail});
       dispatch(setAppearance(val))
+      await axios.post(`${API_URL}/settings/updateAppearance`, { value: val, email: userEmail});
     } catch (error) {
       console.error('Error updating appearance:', error);
     }
@@ -21,8 +21,8 @@ const useAccountSettings = () => {
 
   const updateStayLoggedIn = async (val: 'Always' | 'Never') => {
     try {
-        await axios.post(`${API_URL}/settings/updateStayLoggedIn`, { value: val, email: userEmail});
         dispatch(setStayLoggedIn(val))
+        await axios.post(`${API_URL}/settings/updateStayLoggedIn`, { value: val, email: userEmail});
       } catch (error) {
         console.error('Error updating stayLoggedIn:', error);
       }
@@ -30,8 +30,8 @@ const useAccountSettings = () => {
 
   const updateDefaultHomepage = async (val: "Home" | "Discover" | "Favourites" | "Community" ) => {
     try {
-        await axios.post(`${API_URL}/settings/updateDefaultHomepage`, { value: val, email: userEmail});
         dispatch(setDefaultHomepage(val))
+        await axios.post(`${API_URL}/settings/updateDefaultHomepage`, { value: val, email: userEmail});
       } catch (error) {
         console.error('Error updating defaultHomepage:', error);
       }
