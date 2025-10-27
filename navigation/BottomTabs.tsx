@@ -10,74 +10,79 @@ import CommunityScreen from "../screens/main/CommunityScreen";
 import AccountStack from "./AccountStack";
 
 import { ThemeContext } from "../contexts/ThemeContext";
+import lightTheme from "../themes/lightTheme";
 
 import { useAppSelector } from "../store/hooks";
 
 type IoniconName = keyof typeof Ionicons.glyphMap;
-
 const Tab = createBottomTabNavigator();
+
+const icons: Record<string, IoniconName> = {
+  Home: "home-outline",
+  Discover: "search-outline",
+  Favourites: "heart-outline",
+  Community: "people-outline",
+  Account: "person-outline",
+};
+
+const TabIcon = ({
+  theme,
+  focused,
+  color,
+  name,
+}: {
+  theme: typeof lightTheme;
+  focused: boolean;
+  color: string;
+  name: IoniconName;
+}) => (
+  <View
+    style={{
+      width: "150%",
+      borderTopWidth: focused ? 2 : 0,
+      borderTopColor: focused ? theme.colors.primary : "transparent",
+      alignItems: "center",
+      justifyContent: "center",
+      flex: 1,
+      paddingTop: 5,
+    }}
+  >
+    <Ionicons
+      name={focused ? (name.replace("-outline", "") as IoniconName) : name}
+      size={24}
+      color={color}
+    />
+  </View>
+);
 
 export default function BottomTabs() {
   const { theme } = useContext(ThemeContext);
-
   const { defaultHomepage } = useAppSelector((state) => state.accountSettings);
 
   return (
     <Tab.Navigator
       initialRouteName={defaultHomepage}
-      screenOptions={({ route }) => {
-        let iconName: IoniconName = "ellipse";
-
-        if (route.name === "Home") {
-          iconName = "home-outline";
-        } else if (route.name === "Discover") {
-          iconName = "search-outline";
-        } else if (route.name === "Favourites") {
-          iconName = "heart-outline";
-        } else if (route.name === "Community") {
-          iconName = "people-outline";
-        } else if (route.name === "Account") {
-          iconName = "person-outline";
-        }
-
-        return {
-          headerShown: false,
-          tabBarShowLabel: false,
-          tabBarIcon: ({ focused, color }) => (
-            <View
-              style={{
-                width: '150%',
-                borderTopWidth: focused ? 2 : 0,
-                borderTopColor: focused ? "#e11d48" : "transparent",
-                alignItems: "center",
-                justifyContent: "center",
-                flex: 1,
-                paddingTop: 5,
-              }}
-            >
-              <Ionicons
-                name={
-                  focused
-                    ? (iconName.replace("-outline", "") as IoniconName)
-                    : iconName
-                }
-                size={24}
-                color={color}
-              />
-            </View>
-          ),
-          tabBarIndicatorStyle: { height: 0 },
-          tabBarStyle: {
-            backgroundColor: theme.colors.secondaryBackground,
-            height: 65,
-            borderTopWidth: 0,
-            elevation: 0,
-            shadowOpacity: 0,
-          },
-          tabBarActiveTintColor: "#e11d48",
-          tabBarInactiveTintColor: "gray",
-        };
-      }}
+      screenOptions={({ route }) => ({
+        headerShown: false,
+        tabBarShowLabel: false,
+        tabBarIcon: ({ focused, color }) => (
+          <TabIcon
+            theme={theme}
+            focused={focused}
+            color={color}
+            name={icons[route.name] ?? "ellipse"}
+          />
+        ),
+        tabBarStyle: {
+          backgroundColor: theme.colors.secondaryBackground,
+          height: 65,
+          borderTopWidth: 0,
+          elevation: 0,
+          shadowOpacity: 0,
+        },
+        tabBarActiveTintColor: "#e11d48",
+        tabBarInactiveTintColor: "gray",
+      })}
     >
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Discover" component={DiscoverScreen} />

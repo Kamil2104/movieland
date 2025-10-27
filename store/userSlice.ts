@@ -1,24 +1,31 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface UserState {
   userEmail: string | null;
   userName: string | null;
   password: string | null;
-  isLoggedIn: boolean
+  isLoggedIn: boolean;
 }
 
 const initialState: UserState = {
   userEmail: null,
   userName: null,
   password: null,
-  isLoggedIn: false
+  isLoggedIn: false,
 };
 
 const userSlice = createSlice({
-  name: 'user',
+  name: "user",
   initialState,
   reducers: {
-    login: (state, action: PayloadAction<{ email: string; userName: string; password: string }>) => {
+    login: (
+      state,
+      action: PayloadAction<{
+        email: string;
+        userName: string;
+        password: string;
+      }>
+    ) => {
       state.userEmail = action.payload.email;
       state.userName = action.payload.userName;
       state.password = action.payload.password;
@@ -28,7 +35,7 @@ const userSlice = createSlice({
       state.userEmail = null;
       state.userName = null;
       state.password = null;
-      state.isLoggedIn = false
+      state.isLoggedIn = false;
     },
   },
 });

@@ -16,23 +16,39 @@ const accountSettingsSlice = createSlice({
   name: "accountSettings",
   initialState,
   reducers: {
-    setAppearance: (state, action: PayloadAction<AccountSettingsState["appearance"]>) => {
+    setAppearance: (
+      state,
+      action: PayloadAction<AccountSettingsState["appearance"]>
+    ) => {
       state.appearance = action.payload;
     },
-    setStayLoggedIn: (state, action: PayloadAction<AccountSettingsState["stayLoggedIn"]>) => {
+    setStayLoggedIn: (
+      state,
+      action: PayloadAction<AccountSettingsState["stayLoggedIn"]>
+    ) => {
       state.stayLoggedIn = action.payload;
     },
-    setDefaultHomepage: (state, action: PayloadAction<AccountSettingsState["defaultHomepage"]>) => {
+    setDefaultHomepage: (
+      state,
+      action: PayloadAction<AccountSettingsState["defaultHomepage"]>
+    ) => {
       state.defaultHomepage = action.payload;
     },
-    setAccountSettings: (state, action: PayloadAction<AccountSettingsState>) => {
-      state.appearance = action.payload.appearance
-      state.stayLoggedIn = action.payload.stayLoggedIn
-      state.defaultHomepage = action.payload.defaultHomepage
-    }
+    setAccountSettings: (
+      state,
+      action: PayloadAction<AccountSettingsState>
+    ) => {
+      state.appearance = action.payload.appearance;
+      state.stayLoggedIn = action.payload.stayLoggedIn;
+      state.defaultHomepage = action.payload.defaultHomepage;
+    },
   },
 });
 
-
-export const { setAppearance, setStayLoggedIn, setDefaultHomepage, setAccountSettings } = accountSettingsSlice.actions;
+export const {
+  setAppearance,
+  setStayLoggedIn,
+  setDefaultHomepage,
+  setAccountSettings,
+} = accountSettingsSlice.actions;
 export default accountSettingsSlice.reducer;

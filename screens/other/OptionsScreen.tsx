@@ -1,70 +1,106 @@
 import React, { useState, useContext } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { ThemeContext } from "../../contexts/ThemeContext";
-
 import { useRoute, useNavigation } from "@react-navigation/native";
-import { useAppSelector } from "../../store/hooks";
-
 import { Ionicons } from "@expo/vector-icons";
-
 import useAccountSettings from "../../hooks/useAccountSettings";
+
+type SettingKey = "appearance" | "stayLoggedIn" | "defaultHomepage";
+
+interface OptionItemProps {
+  option: string;
+  isSelected: boolean;
+  onPress: (opt: string) => void;
+  isFirst: boolean;
+  isLast: boolean;
+}
 
 export default function OptionsScreen() {
   const { theme } = useContext(ThemeContext);
-  const { updateSetting } = useAccountSettings()
+  const { updateSetting } = useAccountSettings();
 
   const route = useRoute();
   const navigation = useNavigation();
 
   const { stateKey, options, title, selectedOptionParam } = route.params as {
-    stateKey: 'appearance' | 'stayLoggedIn' | 'defaultHomepage'
-    title: string,
+    stateKey: SettingKey;
+    title: string;
     options: string[];
-    selectedOptionParam: string
+    selectedOptionParam: string;
   };
 
-  const [selectedOption, setSelectedOption] = useState<string>(selectedOptionParam)
+  const [selectedOption, setSelectedOption] =
+    useState<string>(selectedOptionParam);
 
-  const onPress = (opt: any) => {
-    setSelectedOption(opt)
-    updateSetting(stateKey, opt)
-  }
+  const onPressOption = (opt: string) => {
+    setSelectedOption(opt);
+    updateSetting(stateKey, opt);
+  };
+
+  const getOptionStyle = (isFirst: boolean, isLast: boolean) => [
+    styles.option,
+    isFirst && { borderTopLeftRadius: 20, borderTopRightRadius: 20 },
+    isLast && { borderBottomLeftRadius: 20, borderBottomRightRadius: 20 },
+  ];
+
+  const OptionItem = ({
+    option,
+    isSelected,
+    onPress,
+    isFirst,
+    isLast,
+  }: OptionItemProps) => (
+    <TouchableOpacity
+      key={option}
+      style={getOptionStyle(isFirst, isLast)}
+      onPress={() => onPress(option)}
+    >
+      <Text style={styles.optionTitle}>{option}</Text>
+      {isSelected && (
+        <Ionicons
+          name="checkmark-circle"
+          size={28}
+          color={theme.colors.primary}
+        />
+      )}
+    </TouchableOpacity>
+  );
 
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      flexDirection: 'column',
-      width: '100%',
+      flexDirection: "column",
+      width: "100%",
       padding: 20,
       paddingTop: 80,
-      backgroundColor: theme.colors.background
+      backgroundColor: theme.colors.background,
     },
     header: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
       marginBottom: 40,
-      position: 'relative',
+      position: "relative",
     },
     backButton: {
-      position: 'absolute',
+      position: "absolute",
       left: 0,
-      color: theme.colors.labelText
+      color: theme.colors.labelText,
     },
     backButtonIcon: {
       color: theme.colors.labelText,
     },
     title: {
       fontSize: 20,
-      fontWeight: '500',
-      color: theme.colors.text
+      fontWeight: "500",
+      color: theme.colors.text,
     },
     option: {
-      width: '100%',
+      width: "100%",
       height: 50,
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      flexDirection: 'row',
+      justifyContent: "space-between",
+      alignItems: "center",
+      flexDirection: "row",
       backgroundColor: theme.colors.cardBackground,
       paddingVertical: 10,
       paddingHorizontal: 15,
@@ -73,7 +109,7 @@ export default function OptionsScreen() {
     },
     optionTitle: {
       fontSize: 16,
-      fontWeight: '500',
+      fontWeight: "500",
       color: theme.colors.text,
     },
   });
@@ -81,36 +117,29 @@ export default function OptionsScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-          <Ionicons name="chevron-back-circle" size={36} style={styles.backButtonIcon} />
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}
+        >
+          <Ionicons
+            name="chevron-back-circle"
+            size={36}
+            style={styles.backButtonIcon}
+          />
         </TouchableOpacity>
         <Text style={styles.title}>{title}</Text>
       </View>
-      {options.map((option, index) => {
-        const isFirst = index === 0;
-        const isLast = index === options.length - 1;
 
-        return (
-          <TouchableOpacity
-            key={option}
-            style={[
-              styles.option,
-              isFirst && {
-                borderTopLeftRadius: 20,
-                borderTopRightRadius: 20,
-              },
-              isLast && {
-                borderBottomLeftRadius: 20,
-                borderBottomRightRadius: 20,
-              },
-            ]}
-            onPress={() => onPress(option)}
-          >
-            <Text style={styles.optionTitle}> {option} </Text>
-            {option === selectedOption && <Ionicons name="checkmark-circle" size={28} color={theme.colors.primary} />}
-          </TouchableOpacity>
-        );
-      })}
+      {options.map((option, index) => (
+        <OptionItem
+          key={option}
+          option={option}
+          isSelected={option === selectedOption}
+          onPress={onPressOption}
+          isFirst={index === 0}
+          isLast={index === options.length - 1}
+        />
+      ))}
     </View>
   );
 }

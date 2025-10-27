@@ -1,17 +1,17 @@
-import sqlite3 from 'sqlite3';
-import { open } from 'sqlite';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import sqlite3 from "sqlite3";
+import { open } from "sqlite";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export const db = await open({
-  filename: path.resolve(__dirname, './movieland.db'),
+  filename: path.resolve(__dirname, "./movieland.db"),
   driver: sqlite3.Database,
 });
 
-// Tworzenie tabel, jeśli nie istnieją
+// Creating tables if they don't exist
 await db.exec(`
   CREATE TABLE IF NOT EXISTS users (
     email TEXT PRIMARY KEY,
