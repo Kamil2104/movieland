@@ -13,7 +13,7 @@ interface SubmitButtonProps {
   theme: any;
 }
 
-export default function SubmitButton({
+function SubmitButton({
   onPress,
   disabled,
   isSubmitting,
@@ -46,3 +46,5 @@ export default function SubmitButton({
     </TouchableOpacity>
   );
 }
+
+export default React.memo(SubmitButton)

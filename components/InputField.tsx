@@ -30,7 +30,7 @@ interface InputFieldProps {
   theme: any;
 }
 
-export default function InputField({
+function InputField({
   label,
   value,
   placeholder,
@@ -120,3 +120,5 @@ export default function InputField({
     </>
   );
 }
+
+export default React.memo(InputField)

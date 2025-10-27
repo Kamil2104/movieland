@@ -11,7 +11,7 @@ type DropdownListProps = {
   onPress: () => void;
 };
 
-export default function DropdownList(props: DropdownListProps) {
+function DropdownList(props: DropdownListProps) {
   const { theme } = useContext(ThemeContext);
   const { title, selectedOption, style, onPress } = props;
 
@@ -67,3 +67,5 @@ export default function DropdownList(props: DropdownListProps) {
     </TouchableOpacity>
   );
 }
+
+export default React.memo(DropdownList)

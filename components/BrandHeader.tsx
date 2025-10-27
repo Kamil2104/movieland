@@ -10,7 +10,7 @@ interface BrandHeaderProps {
   description: string;
 }
 
-export default function BrandHeader(props: BrandHeaderProps) {
+function BrandHeader(props: BrandHeaderProps) {
   const { theme, subtitle, description } = props;
 
   const styles = StyleSheet.create({
@@ -67,3 +67,5 @@ export default function BrandHeader(props: BrandHeaderProps) {
     </View>
   );
 }
+
+export default React.memo(BrandHeader)
