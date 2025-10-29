@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useContext } from "react";
 import {
   View,
   Text,
@@ -11,17 +11,19 @@ import { useNavigation } from "@react-navigation/native";
 
 import { useAppDispatch } from "../../store/hooks";
 import { handleLogin } from "../../validation/accountManagement";
-import lightTheme from "../../themes/lightTheme";
 
 import BrandHeader from "../../components/BrandHeader";
 import InputField from "../../components/InputField";
 import SubmitButton from "../../components/SubmitButton";
 
+import { ThemeContext } from "../../contexts/ThemeContext";
+
 import type { RootStackParamList } from "../../types/navigationTypes";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 export default function LoginScreen() {
-  const theme = lightTheme;
+  const { theme } = useContext(ThemeContext);
+
   const dispatch = useAppDispatch();
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();

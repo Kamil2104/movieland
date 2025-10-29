@@ -1,4 +1,4 @@
-import React, { createContext } from "react";
+import React, { useState, useEffect, createContext } from "react";
 import { useColorScheme } from "react-native";
 import { lightTheme, darkTheme } from "../themes/themes";
 import type { ThemeContextType } from "../types/themeTypes";
@@ -23,14 +23,12 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
         ? darkTheme
         : lightTheme
       : appearance === "Dark"
-      ? darkTheme
-      : lightTheme;
-  //! FOR NOW IT'S COMMENTED BECAUSE IT'S NOT WORKING
-  //! SYSTEM COLOR SCHEME RETURNS LIGHT WHILE I HAVE MY SYSTEM IN DARK MODE
-  // useEffect(() => {
-  //   console.log('System color scheme:', systemColorScheme);
-  //   setTheme(systemColorScheme === 'dark' ? darkTheme : lightTheme);
-  // }, [systemColorScheme]);
+        ? darkTheme
+        : lightTheme;
+
+  useEffect(() => {
+    console.log(systemColorScheme);
+  }, []);
 
   return (
     <ThemeContext.Provider value={{ theme }}>{children}</ThemeContext.Provider>
