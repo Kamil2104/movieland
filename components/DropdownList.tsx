@@ -9,14 +9,16 @@ type DropdownListProps = {
   selectedOption: string | undefined;
   style: string;
   onPress: () => void;
+  isLast?: true;
 };
 
 function DropdownList(props: DropdownListProps) {
   const { theme } = useContext(ThemeContext);
-  const { title, selectedOption, style, onPress } = props;
+  const { title, selectedOption, style, onPress, isLast } = props;
 
   const topRadius = style === "start" ? 20 : 0;
   const bottomRadius = style === "end" ? 20 : 0;
+  const borderBottomWidth = isLast ? 0 : 1
 
   const styles = StyleSheet.create({
     container: {
@@ -31,7 +33,7 @@ function DropdownList(props: DropdownListProps) {
       borderBottomStartRadius: bottomRadius,
       borderBottomEndRadius: bottomRadius,
       padding: 15,
-      borderBottomWidth: 1,
+      borderBottomWidth: borderBottomWidth,
       borderBottomColor: theme.colors.divider,
     },
     title: {

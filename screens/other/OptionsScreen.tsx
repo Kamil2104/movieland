@@ -40,7 +40,7 @@ export default function OptionsScreen() {
   const getOptionStyle = (isFirst: boolean, isLast: boolean) => [
     styles.option,
     isFirst && { borderTopLeftRadius: 20, borderTopRightRadius: 20 },
-    isLast && { borderBottomLeftRadius: 20, borderBottomRightRadius: 20 },
+    isLast && { borderBottomLeftRadius: 20, borderBottomRightRadius: 20, borderBottomWidth: 0 },
   ];
 
   const OptionItem = ({

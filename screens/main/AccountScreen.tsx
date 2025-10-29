@@ -177,6 +177,7 @@ export default function AccountScreen() {
           selectedOption={defaultHomepage}
           style="end"
           onPress={() => handleDefaultHomepageUpdate()}
+          isLast={true}
         />
       </View>
       <View style={styles.options}>
