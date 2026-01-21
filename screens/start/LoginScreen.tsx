@@ -16,14 +16,12 @@ import BrandHeader from "../../components/BrandHeader";
 import InputField from "../../components/InputField";
 import SubmitButton from "../../components/SubmitButton";
 
-import { ThemeContext } from "../../contexts/ThemeContext";
-
 import type { RootStackParamList } from "../../types/navigationTypes";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-export default function LoginScreen() {
-  const { theme } = useContext(ThemeContext);
+import darkTheme from "../../themes/darkTheme";
 
+export default function LoginScreen() {
   const dispatch = useAppDispatch();
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -36,6 +34,8 @@ export default function LoginScreen() {
   const [showPassword, setShowPassword] = useState(false);
 
   const passwordInputRef = useRef<TextInput>(null);
+
+  const theme = darkTheme;
 
   const styles = StyleSheet.create({
     container: {

@@ -10,7 +10,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-import lightTheme from "../../themes/lightTheme";
+import darkTheme from "../../themes/darkTheme";
 import { handleRegister } from "../../validation/accountManagement";
 import BrandHeader from "../../components/BrandHeader";
 import InputField from "../../components/InputField";
@@ -18,7 +18,7 @@ import SubmitButton from "../../components/SubmitButton";
 import type { RootStackParamList } from "../../types/navigationTypes";
 
 export default function RegisterScreen() {
-  const theme = lightTheme;
+  const theme = darkTheme;
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
