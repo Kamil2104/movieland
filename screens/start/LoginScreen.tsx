@@ -57,7 +57,7 @@ export default function LoginScreen() {
       shadowOffset: { width: 0, height: 8 },
       elevation: 3,
     },
-    registerText: {
+    helpText: {
       color: theme.colors.labelText,
       opacity: 0.7,
       marginTop: 14,
@@ -67,6 +67,9 @@ export default function LoginScreen() {
   });
 
   const onSubmit = () => {
+    setEmailError(null);
+    setPasswordError(null);
+
     handleLogin({
       email,
       password,
@@ -105,6 +108,17 @@ export default function LoginScreen() {
             onSubmitEditing={() => passwordInputRef.current?.focus()}
             theme={theme}
           />
+          {emailError && (
+            <Text
+              style={{
+                color: theme.colors.error,
+                marginTop: 0,
+                marginBottom: 0,
+              }}
+            >
+              {emailError}
+            </Text>
+          )}
 
           <InputField
             label="Password"
@@ -129,18 +143,6 @@ export default function LoginScreen() {
             theme={theme}
           />
 
-          {emailError && (
-            <Text
-              style={{
-                color: theme.colors.error,
-                marginTop: 0,
-                marginBottom: 0,
-              }}
-            >
-              {emailError}
-            </Text>
-          )}
-
           <SubmitButton
             onPress={onSubmit}
             disabled={isSubmitting}
@@ -148,7 +150,15 @@ export default function LoginScreen() {
             theme={theme}
           />
 
-          <Text style={styles.registerText}>
+          <Text style={styles.helpText}>
+            Forgot your password?{" "}
+            <Text
+              style={styles.registerLink}
+            >
+              Change
+            </Text>
+          </Text>
+          <Text style={styles.helpText}>
             Don't have an account?{" "}
             <Text
               style={styles.registerLink}
