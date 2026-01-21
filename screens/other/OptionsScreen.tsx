@@ -4,8 +4,10 @@ import { ThemeContext } from "../../contexts/ThemeContext";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import useAccountSettings from "../../hooks/useAccountSettings";
+import { translate } from "../../locales/i18n";
+import { useAppSelector } from "../../store/hooks";
 
-type SettingKey = "appearance" | "stayLoggedIn" | "defaultHomepage";
+type SettingKey = "appearance" | "stayLoggedIn" | "defaultHomepage" | "language";
 
 interface OptionItemProps {
   option: string;
@@ -18,6 +20,8 @@ interface OptionItemProps {
 export default function OptionsScreen() {
   const { theme } = useContext(ThemeContext);
   const { updateSetting } = useAccountSettings();
+  const { language } = useAppSelector((state) => state.accountSettings);
+  const t = translate(language);
 
   const route = useRoute();
   const navigation = useNavigation();
@@ -29,11 +33,42 @@ export default function OptionsScreen() {
     selectedOptionParam: string;
   };
 
-  const [selectedOption, setSelectedOption] =
-    useState<string>(selectedOptionParam);
+  // Pick language-dependent translator (OptionsScreen params don't include language, so fallback to English titles passed in).
+  const translateOption = (stateKey: SettingKey, option: string) => {
+    switch (stateKey) {
+      case "appearance":
+        if (option === "Dark") return t("darkAppearance");
+        if (option === "Light") return t("lightAppearance");
+        return t("systemAppearance");
+      case "stayLoggedIn":
+        return option === "Always"
+          ? t("alwaysStayLoggedIn")
+          : t("neverStayLoggedIn");
+      case "defaultHomepage":
+        switch (option) {
+          case "Home":
+            return t("homeHomepage");
+          case "Discover":
+            return t("discoverHomepage");
+          case "Favourites":
+            return t("favouritesHomepage");
+          case "Community":
+            return t("communityHomepage");
+          default:
+            return option;
+        }
+      case "language":
+        return option === "Polski" ? t("polishLanguage") : t("englishLanguage");
+      default:
+        return option;
+    }
+  };
+
+  const [selectedOption, setSelectedOption] = useState<string>(selectedOptionParam);
 
   const onPressOption = (opt: string) => {
     setSelectedOption(opt);
+    // send English values to API (options array must contain English values)
     updateSetting(stateKey, opt);
   };
 
@@ -55,7 +90,9 @@ export default function OptionsScreen() {
       style={getOptionStyle(isFirst, isLast)}
       onPress={() => onPress(option)}
     >
-      <Text style={styles.optionTitle}>{option}</Text>
+          <Text style={styles.optionTitle}>
+            {translateOption(stateKey, option)}
+          </Text>
       {isSelected && (
         <Ionicons
           name="checkmark-circle"

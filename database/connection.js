@@ -27,6 +27,7 @@ await db.exec(`
     appearance TEXT DEFAULT 'light',
     stayLoggedIn TEXT DEFAULT 'Always',
     defaultHomepage TEXT DEFAULT 'Home',
+    language TEXT DEFAULT 'English',
     FOREIGN KEY (email) REFERENCES users(email)
   );
 `);

@@ -8,7 +8,7 @@ router.post("/getSettings", async (req, res) => {
 
   try {
     const settings = await db.get(
-      "SELECT appearance, stayLoggedIn, defaultHomepage FROM settings WHERE email = ?",
+      "SELECT appearance, stayLoggedIn, defaultHomepage, language FROM settings WHERE email = ?",
       [email]
     );
     if (!settings)
@@ -30,6 +30,7 @@ router.post("/updateAppearance", async (req, res) => {
     ]);
     res.status(200).json({ message: "Success" });
   } catch (err) {
+    console.error("Error updating appearance:", err);
     res
       .status(500)
       .json({ message: "Error updating appearance", error: err.message });
@@ -45,6 +46,7 @@ router.post("/updateStayLoggedIn", async (req, res) => {
     ]);
     res.status(200).json({ message: "Success" });
   } catch (err) {
+    console.error("Error updating stayLoggedIn:", err);
     res
       .status(500)
       .json({ message: "Error updating stayLoggedIn", error: err.message });
@@ -60,9 +62,26 @@ router.post("/updateDefaultHomepage", async (req, res) => {
     ]);
     res.status(200).json({ message: "Success" });
   } catch (err) {
+    console.error("Error updating defaultHomepage:", err);
     res
       .status(500)
       .json({ message: "Error updating defaultHomepage", error: err.message });
+  }
+});
+
+router.post("/updateLanguage", async (req, res) => {
+  const { email, value } = req.body;
+  try {
+    await db.run("UPDATE settings SET language = ? WHERE email = ?", [
+      value,
+      email,
+    ]);
+    res.status(200).json({ message: "Success" });
+  } catch (err) {
+    console.error("Error updating language:", err);
+    res
+      .status(500)
+      .json({ message: "Error updating language", error: err.message });
   }
 });
 

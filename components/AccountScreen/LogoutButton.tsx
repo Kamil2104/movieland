@@ -8,6 +8,8 @@ import { logout } from "../../store/userSlice";
 import { ThemeContext } from "../../contexts/ThemeContext";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../types/navigationTypes";
+import { translate } from "../../locales/i18n";
+import { useAppSelector } from "../../store/hooks";
 
 type NavigationPropLogin = NativeStackNavigationProp<
   RootStackParamList,
@@ -16,18 +18,20 @@ type NavigationPropLogin = NativeStackNavigationProp<
 
 const LogoutButton = ({ styles }: { styles: any }) => {
   const { theme } = useContext(ThemeContext);
+  const { language } = useAppSelector((state) => state.accountSettings);
+  const t = translate(language);
   const dispatch = useAppDispatch();
 
   const navigationLogin = useNavigation<NavigationPropLogin>();
 
   const handleLogout = () => {
     Alert.alert(
-      "Confirm Logout",
-      "Do you really want to log out of your account?",
+      t("logoutTitle"),
+      t("logoutMessage"),
       [
-        { text: "Stay Logged In", style: "cancel" },
+        { text: t("logoutCancel"), style: "cancel" },
         {
-          text: "Log Out",
+          text: t("logoutConfirm"),
           style: "destructive",
           onPress: () => {
             dispatch(logout());
@@ -42,7 +46,7 @@ const LogoutButton = ({ styles }: { styles: any }) => {
   return (
     <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
       <View style={styles.logoutContainer}>
-        <Text style={styles.logoutText}>Logout</Text>
+        <Text style={styles.logoutText}>{t("logout")}</Text>
         <Ionicons name="log-out-outline" size={24} color={theme.colors.text} />
       </View>
     </TouchableOpacity>

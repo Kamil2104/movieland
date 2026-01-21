@@ -1,16 +1,19 @@
 import axios from "axios";
+import type { AxiosError } from "axios";
 
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import {
   setAppearance,
   setStayLoggedIn,
   setDefaultHomepage,
+  setLanguage,
 } from "../store/settingsSlice";
 import { API_URL } from "@env";
 
 type Appearance = "Light" | "Dark";
 type StayLoggedIn = "Always" | "Never";
 type Homepage = "Home" | "Discover" | "Favourites" | "Community";
+type Language = "English" | "Polski";
 
 const useAccountSettings = () => {
   const dispatch = useAppDispatch();
@@ -29,6 +32,9 @@ const useAccountSettings = () => {
         case "defaultHomepage":
           dispatch(setDefaultHomepage(value as Homepage));
           break;
+        case "language":
+          dispatch(setLanguage(value as Language));
+          break;
       }
 
       await axios.post(`${API_URL}/settings/update${capitalize(option)}`, {
@@ -36,7 +42,8 @@ const useAccountSettings = () => {
         email: userEmail,
       });
     } catch (error) {
-      console.error(`Error updating ${option}:`, error);
+      const axiosErr = error as AxiosError<any>;
+      console.error(`Error updating ${option}:`, axiosErr.response?.data ?? error);
     }
   };
 

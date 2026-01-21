@@ -43,8 +43,8 @@ router.post("/register", async (req, res) => {
       password,
     ]);
     await db.run(
-      "INSERT INTO settings (email, name, appearance, stayLoggedIn, defaultHomepage) VALUES (?, ?, ?, ?, ?)",
-      [email, name, "light", "Always", "Home"]
+      "INSERT INTO settings (email, name, appearance, stayLoggedIn, defaultHomepage, language) VALUES (?, ?, ?, ?, ?, ?)",
+      [email, name, "light", "Always", "Home", "English"]
     );
 
     res.status(200).json({ message: "Success" });

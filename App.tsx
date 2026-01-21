@@ -41,6 +41,7 @@ function AppNavigator() {
                 appearance: settings.appearance,
                 stayLoggedIn: settings.stayLoggedIn,
                 defaultHomepage: settings.defaultHomepage,
+                language: settings.language,
               })
             );
           }

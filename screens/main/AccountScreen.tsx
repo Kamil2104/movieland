@@ -4,6 +4,7 @@ import { StyleSheet, View } from "react-native";
 import { ThemeContext } from "../../contexts/ThemeContext";
 
 import { useAppSelector } from "../../store/hooks";
+import { translate } from "../../locales/i18n";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -33,16 +34,46 @@ type NavigationPropLogin = NativeStackNavigationProp<
 export default function AccountScreen() {
   const { theme } = useContext(ThemeContext);
 
-  const { appearance, stayLoggedIn, defaultHomepage } = useAppSelector(
+  const { appearance, stayLoggedIn, defaultHomepage, language } = useAppSelector(
     (state) => state.accountSettings
   );
 
   const navigation = useNavigation<NavigationProp>();
+  const t = translate(language);
+
+  const optionLabel = (stateKey: string, value: string | undefined) => {
+    if (!value) return "";
+    switch (stateKey) {
+      case "appearance":
+        if (value === "Dark") return t("darkAppearance");
+        if (value === "Light") return t("lightAppearance");
+        return t("systemAppearance");
+      case "stayLoggedIn":
+        return value === "Always" ? t("alwaysStayLoggedIn") : t("neverStayLoggedIn");
+      case "defaultHomepage":
+        switch (value) {
+          case "Home":
+            return t("homeHomepage");
+          case "Discover":
+            return t("discoverHomepage");
+          case "Favourites":
+            return t("favouritesHomepage");
+          case "Community":
+            return t("communityHomepage");
+          default:
+            return value;
+        }
+      case "language":
+        return value === "Polski" ? t("polishLanguage") : t("englishLanguage");
+      default:
+        return value;
+    }
+  };
 
   const handleAppearanceUpdate = () => {
     navigation.navigate("OptionsScreen", {
       stateKey: "appearance",
-      title: "Appearance",
+      title: t("appearance"),
       options: ["System", "Dark", "Light"],
       selectedOptionParam: appearance,
     });
@@ -51,7 +82,7 @@ export default function AccountScreen() {
   const handleStayLoggedInUpdate = () => {
     navigation.navigate("OptionsScreen", {
       stateKey: "stayLoggedIn",
-      title: "Stay logged in",
+      title: t("stayLoggedIn"),
       options: ["Always", "Never"],
       selectedOptionParam: stayLoggedIn,
     });
@@ -60,12 +91,20 @@ export default function AccountScreen() {
   const handleDefaultHomepageUpdate = () => {
     navigation.navigate("OptionsScreen", {
       stateKey: "defaultHomepage",
-      title: "Default homepage",
+      title: t("defaultHomepage"),
       options: ["Home", "Discover", "Favourites", "Community"],
       selectedOptionParam: defaultHomepage,
     });
   };
 
+  const handleLanguageUpdate = () => {
+    navigation.navigate("OptionsScreen", {
+      stateKey: "language",
+      title: t("language"),
+      options: ["English", "Polski"],
+      selectedOptionParam: language,
+    });
+  };
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -161,22 +200,28 @@ export default function AccountScreen() {
       <ProfileCard styles={styles} />
       <View style={styles.options}>
         <DropdownList
-          title="Appearance"
-          selectedOption={appearance}
+          title={t("appearance")}
+          selectedOption={optionLabel("appearance", appearance)}
           style="start"
           onPress={() => handleAppearanceUpdate()}
         />
         <DropdownList
-          title="Stay logged in"
-          selectedOption={stayLoggedIn}
+          title={t("stayLoggedIn")}
+          selectedOption={optionLabel("stayLoggedIn", stayLoggedIn)}
           style="center"
           onPress={() => handleStayLoggedInUpdate()}
         />
         <DropdownList
-          title="Default homepage"
-          selectedOption={defaultHomepage}
-          style="end"
+          title={t("defaultHomepage")}
+          selectedOption={optionLabel("defaultHomepage", defaultHomepage)}
+          style="center"
           onPress={() => handleDefaultHomepageUpdate()}
+        />
+        <DropdownList
+          title={t("language")}
+          selectedOption={optionLabel("language", language)}
+          style="end"
+          onPress={() => handleLanguageUpdate()}
           isLast={true}
         />
       </View>

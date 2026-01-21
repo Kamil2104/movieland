@@ -9,6 +9,7 @@ import { ThemeContext } from "../../contexts/ThemeContext";
 import { API_URL } from "@env";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../types/navigationTypes";
+import { translate } from "../../locales/i18n";
 
 type NavigationPropLogin = NativeStackNavigationProp<
   RootStackParamList,
@@ -18,6 +19,8 @@ type NavigationPropLogin = NativeStackNavigationProp<
 const DeleteAccountButton = ({ styles }: { styles: any }) => {
   const { theme } = useContext(ThemeContext);
   const { userEmail } = useAppSelector((state) => state.user);
+  const { language } = useAppSelector((state) => state.accountSettings);
+  const t = translate(language);
 
   const navigationLogin = useNavigation<NavigationPropLogin>();
 
@@ -32,12 +35,12 @@ const DeleteAccountButton = ({ styles }: { styles: any }) => {
 
   const handleDeleteAccount = () => {
     Alert.alert(
-      "Confirm Delete Account",
-      "Do you really want to delete your account?",
+      t("deleteTitle"),
+      t("deleteMessage"),
       [
-        { text: "Cancel", style: "cancel" },
+        { text: t("deleteCancel"), style: "cancel" },
         {
-          text: "Delete Account",
+          text: t("deleteConfirm"),
           style: "destructive",
           onPress: handleDeleteAccountAction,
         },
@@ -51,7 +54,7 @@ const DeleteAccountButton = ({ styles }: { styles: any }) => {
       style={styles.deleteAccountButton}
       onPress={handleDeleteAccount}
     >
-      <Text style={styles.deleteAccountText}>Delete Account</Text>
+      <Text style={styles.deleteAccountText}>{t("deleteAccount")}</Text>
       <Ionicons name="trash-outline" size={24} color={theme.colors.error} />
     </TouchableOpacity>
   );
