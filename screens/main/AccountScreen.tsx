@@ -5,6 +5,7 @@ import { ThemeContext } from "../../contexts/ThemeContext";
 
 import { useAppSelector } from "../../store/hooks";
 import { translate } from "../../locales/i18n";
+import { formatOptionLabel } from "../../locales/optionLabel";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -40,35 +41,6 @@ export default function AccountScreen() {
 
   const navigation = useNavigation<NavigationProp>();
   const t = translate(language);
-
-  const optionLabel = (stateKey: string, value: string | undefined) => {
-    if (!value) return "";
-    switch (stateKey) {
-      case "appearance":
-        if (value === "Dark") return t("darkAppearance");
-        if (value === "Light") return t("lightAppearance");
-        return t("systemAppearance");
-      case "stayLoggedIn":
-        return value === "Always" ? t("alwaysStayLoggedIn") : t("neverStayLoggedIn");
-      case "defaultHomepage":
-        switch (value) {
-          case "Home":
-            return t("homeHomepage");
-          case "Discover":
-            return t("discoverHomepage");
-          case "Favourites":
-            return t("favouritesHomepage");
-          case "Community":
-            return t("communityHomepage");
-          default:
-            return value;
-        }
-      case "language":
-        return value === "Polski" ? t("polishLanguage") : t("englishLanguage");
-      default:
-        return value;
-    }
-  };
 
   const handleAppearanceUpdate = () => {
     navigation.navigate("OptionsScreen", {
@@ -201,25 +173,25 @@ export default function AccountScreen() {
       <View style={styles.options}>
         <DropdownList
           title={t("appearance")}
-          selectedOption={optionLabel("appearance", appearance)}
+          selectedOption={formatOptionLabel("appearance", appearance, t)}
           style="start"
           onPress={() => handleAppearanceUpdate()}
         />
         <DropdownList
           title={t("stayLoggedIn")}
-          selectedOption={optionLabel("stayLoggedIn", stayLoggedIn)}
+          selectedOption={formatOptionLabel("stayLoggedIn", stayLoggedIn, t)}
           style="center"
           onPress={() => handleStayLoggedInUpdate()}
         />
         <DropdownList
           title={t("defaultHomepage")}
-          selectedOption={optionLabel("defaultHomepage", defaultHomepage)}
+          selectedOption={formatOptionLabel("defaultHomepage", defaultHomepage, t)}
           style="center"
           onPress={() => handleDefaultHomepageUpdate()}
         />
         <DropdownList
           title={t("language")}
-          selectedOption={optionLabel("language", language)}
+          selectedOption={formatOptionLabel("language", language, t)}
           style="end"
           onPress={() => handleLanguageUpdate()}
           isLast={true}
